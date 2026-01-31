@@ -13,7 +13,8 @@ type NavBarProps = {
 
 const defaultNavItems: NavItem[] = [
   { to: '/', label: 'Home' },
-  { to: '/report', label: 'Report' },
+  { to: '/projects', label: 'Projects' },
+  { to: '/about', label: 'About' },
 ];
 
 export default function NavBar({ activePath, items = defaultNavItems }: NavBarProps) {
