@@ -4,9 +4,9 @@ type StatusBadgeProps = {
 };
 
 const variantClasses: Record<NonNullable<StatusBadgeProps['variant']>, string> = {
-  default: 'text-gray-500 bg-gray-100',
-  success: 'text-green-700 bg-green-100',
-  warning: 'text-yellow-700 bg-yellow-100',
+  default: 'text-dawta-600 bg-dawta-100',
+  success: 'text-dawta-700 bg-dawta-100',
+  warning: 'text-dawta-800 bg-dawta-200',
   error: 'text-red-700 bg-red-100',
 };
 

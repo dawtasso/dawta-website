@@ -5,9 +5,9 @@ export default function Layout() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col bg-theme-primary">
       <NavBar activePath={location.pathname} />
-      <main className="flex-1">
+      <main className="flex-1 diffraction-pattern">
         <Outlet />
       </main>
       <Footer />
