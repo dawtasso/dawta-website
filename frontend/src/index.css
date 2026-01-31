@@ -3,8 +3,86 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* 
+   * THEME COLORS - INVERTED (dark background, light text)
+   * 
+   * To revert to light theme, swap these values back:
+   *   --color-bg-primary: #ffffff;      (was #1a1a1a)
+   *   --color-bg-secondary: #f5f5f5;    (was #353535)
+   *   --color-text-primary: #1a1a1a;    (was #ffffff)
+   *   --color-text-secondary: #535353;   (was #e8e8e8)
+   */
+  --color-bg-primary: #1a1a1a;      /* Main background - dark grey */
+  --color-bg-secondary: #353535;    /* Cards, sections - medium grey */
+  --color-bg-tertiary: #474747;     /* Hover states - lighter grey */
+  --color-text-primary: #ffffff;    /* Main text - white */
+  --color-text-secondary: #e8e8e8;   /* Secondary text - light grey */
+  --color-text-tertiary: #b0b0b0;    /* Muted text - medium light grey */
+  --color-border: #474747;          /* Borders - medium grey */
+  --color-border-light: #3d3d3d;    /* Light borders - darker grey */
+}
+
 @layer base {
   body {
     @apply font-sans antialiased;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+  }
+}
+
+@layer components {
+  .bg-theme-primary {
+    background-color: var(--color-bg-primary);
+  }
+  
+  .bg-theme-secondary {
+    background-color: var(--color-bg-secondary);
+  }
+  
+  .bg-theme-tertiary {
+    background-color: var(--color-bg-tertiary);
+  }
+  
+  .text-theme-primary {
+    color: var(--color-text-primary);
+  }
+  
+  .text-theme-secondary {
+    color: var(--color-text-secondary);
+  }
+  
+  .text-theme-tertiary {
+    color: var(--color-text-tertiary);
+  }
+  
+  .border-theme {
+    border-color: var(--color-border);
+  }
+  
+  .border-theme-light {
+    border-color: var(--color-border-light);
+  }
+}
+
+@layer utilities {
+  .diffraction-pattern {
+    background-image: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 1px,
+      rgba(83, 83, 83, 0.02) 1px,
+      rgba(83, 83, 83, 0.02) 2px
+    );
+  }
+  
+  .diffraction-pattern-vertical {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(83, 83, 83, 0.02) 1px,
+      rgba(83, 83, 83, 0.02) 2px
+    );
   }
 }
