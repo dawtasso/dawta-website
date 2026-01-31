@@ -34,7 +34,7 @@ export default function Footer() {
           {/* Brand & Description */}
           <div className="md:col-span-1">
             <Link to="/" className="inline-block mb-4">
-              <Logo size="md" className="brightness-0 invert opacity-90" />
+              <Logo size="md" />
             </Link>
             <p className="text-sm text-theme-secondary leading-relaxed mb-6">
               Association française d'analyse statistique sur données publiques.

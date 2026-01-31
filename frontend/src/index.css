@@ -5,22 +5,25 @@
 
 :root {
   /* 
-   * THEME COLORS - INVERTED (dark background, light text)
+   * THEME COLORS - LIGHT MODE (white background, dark text)
+   * Logo grey (#535353) used only around logo for smooth transition
    * 
-   * To revert to light theme, swap these values back:
-   *   --color-bg-primary: #ffffff;      (was #1a1a1a)
-   *   --color-bg-secondary: #f5f5f5;    (was #353535)
-   *   --color-text-primary: #1a1a1a;    (was #ffffff)
-   *   --color-text-secondary: #535353;   (was #e8e8e8)
+   * To switch to dark theme, swap these values:
+   *   --color-bg-primary: #1f1f1f;      (was #ffffff)
+   *   --color-bg-secondary: #2a2a2a;    (was #f5f5f5)
+   *   --color-text-primary: #ffffff;    (was #1a1a1a)
+   *   --color-text-secondary: #e8e8e8;   (was #535353)
    */
-  --color-bg-primary: #1a1a1a;      /* Main background - dark grey */
-  --color-bg-secondary: #353535;    /* Cards, sections - medium grey */
-  --color-bg-tertiary: #474747;     /* Hover states - lighter grey */
-  --color-text-primary: #ffffff;    /* Main text - white */
-  --color-text-secondary: #e8e8e8;   /* Secondary text - light grey */
-  --color-text-tertiary: #b0b0b0;    /* Muted text - medium light grey */
-  --color-border: #474747;          /* Borders - medium grey */
-  --color-border-light: #3d3d3d;    /* Light borders - darker grey */
+  --color-bg-primary: #ffffff;      /* Main background - white */
+  --color-bg-secondary: #f5f5f5;    /* Cards, sections - light grey */
+  --color-bg-tertiary: #e8e8e8;     /* Hover states - medium light grey */
+  --color-bg-logo: #535353;         /* Logo area - matches logo grey for smooth transition */
+  --color-text-primary: #1a1a1a;    /* Main text - dark */
+  --color-text-secondary: #535353;   /* Secondary text - grey */
+  --color-text-tertiary: #6d6d6d;    /* Muted text - medium grey */
+  --color-border: #d1d1d1;          /* Borders - light grey */
+  --color-border-light: #e8e8e8;    /* Light borders - very light grey */
+  --logo-url: url('/logo_bg_white.png');  /* Logo for light background */
 }
 
 @layer base {
@@ -42,6 +45,10 @@
   
   .bg-theme-tertiary {
     background-color: var(--color-bg-tertiary);
+  }
+  
+  .bg-theme-logo {
+    background-color: var(--color-bg-logo);
   }
   
   .text-theme-primary {
