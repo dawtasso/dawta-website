@@ -3,6 +3,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Mergila';
+  src: url('/fonts/mergila/Mergila-Regular.otf') format('opentype'),
+       url('/fonts/mergila/Mergila-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mergila';
+  src: url('/fonts/mergila/Mergila-Italic.otf') format('opentype'),
+       url('/fonts/mergila/Mergila-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   /* 
    * THEME COLORS - LIGHT MODE (white background, dark text)
@@ -69,6 +87,10 @@
   
   .border-theme-light {
     border-color: var(--color-border-light);
+  }
+  
+  .font-mergila {
+    font-family: 'Mergila', serif;
   }
 }
 

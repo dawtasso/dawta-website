@@ -9,6 +9,9 @@ export interface Project {
   publishedAt?: string;
   hasSlide: boolean;
   hasReport: boolean;
+  hasSummary: boolean;
+  hasPartialReport: boolean;
+  githubUrl?: string;
 }
 
 export async function fetchProjects(): Promise<Project[]> {
@@ -28,5 +31,9 @@ export async function fetchProjects(): Promise<Project[]> {
 
 export function getFileUrl(projectId: string, type: 'slide' | 'report'): string {
   return `${API_BASE_URL}/api/projects/${projectId}/files/${type}`;
+}
+
+export function getContentUrl(projectId: string, type: 'summary' | 'partial_report'): string {
+  return `${API_BASE_URL}/api/projects/${projectId}/content/${type}`;
 }
 

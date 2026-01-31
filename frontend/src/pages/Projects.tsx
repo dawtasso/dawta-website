@@ -18,7 +18,7 @@ export default function Projects() {
     <PageLayout>
       <PageHeader
         title="Projets"
-        subtitle="Nos analyses statistiques sur des données publiques."
+        // subtitle="Nos analyses statistiques"
       />
 
       {isLoading && <LoadingState message="Chargement des projets..." />}

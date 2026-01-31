@@ -8,6 +8,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Mergila', 'serif'],
       },
       colors: {
         dawta: {
@@ -23,6 +24,19 @@ export default {
           800: '#3d3d3d',
           900: '#353535',
           950: '#1a1a1a',
+        },
+        bordeaux: {
+          DEFAULT: '#8B4A5C',
+          50: '#f5f2f3',
+          100: '#e8dde0',
+          200: '#d4bcc2',
+          300: '#b8949f',
+          400: '#9d6f7d',
+          500: '#8B4A5C',
+          600: '#7a3d4f',
+          700: '#6a3242',
+          800: '#5a2837',
+          900: '#4a1f2c',
         },
       },
       spacing: {

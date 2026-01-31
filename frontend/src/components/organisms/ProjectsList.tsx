@@ -19,6 +19,9 @@ export default function ProjectsList({ projects }: ProjectsListProps) {
       {projects.map((project) => (
         <ProjectCard key={project.id} project={project} />
       ))}
+      <div className="pt-6 text-center">
+        <p className="text-theme-secondary italic">et plus à venir</p>
+      </div>
     </div>
   );
 }

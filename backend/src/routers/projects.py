@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 
 from src.models import Project
 from src.services import DATA_DIR, ProjectService
@@ -31,3 +31,28 @@ async def get_project_file(project_id: str, file_type: str):
         media_type="application/pdf",
         filename=f"{project_id}-{file_type}.pdf",
     )
+
+
+@router.get("/{project_id}/content/{content_type}")
+async def get_project_content(project_id: str, content_type: str):
+    """Get project content (summary or partial_report markdown)."""
+    if content_type not in ["summary", "partial_report"]:
+        raise HTTPException(
+            status_code=400, detail="content_type must be 'summary' or 'partial_report'"
+        )
+
+    # Map content_type to filename
+    filename = (
+        "partial_report.md"
+        if content_type == "partial_report"
+        else f"{content_type}.md"
+    )
+    file_path = DATA_DIR / project_id / filename
+
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail=f"File not found: {filename}")
+
+    with open(file_path, encoding="utf-8") as f:
+        content = f.read()
+
+    return Response(content=content, media_type="text/markdown")
