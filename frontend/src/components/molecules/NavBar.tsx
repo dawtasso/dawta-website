@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { DiffractionLogo, NavLink } from '../atoms';
 
 type NavItem = {
@@ -19,27 +18,19 @@ const defaultNavItems: NavItem[] = [
 
 export default function NavBar({ activePath, items = defaultNavItems }: NavBarProps) {
   return (
-    <nav className="relative">
-      {/* Ultra-thin border with spectral gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-[0.5px] data-ray" />
-      
-      <div className="max-w-6xl mx-auto px-6">
+    <nav className="border-b border-black/5">
+      <div className="max-w-5xl mx-auto px-6">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center py-5 group">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <DiffractionLogo size="md" />
-            </motion.div>
-            <span className="ml-3 text-lg font-display font-semibold text-luminous-primary tracking-wide">
+            <DiffractionLogo size="sm" />
+            <span className="ml-3 text-lg font-display font-semibold text-ink tracking-tight">
               dawta
             </span>
           </Link>
 
           {/* Navigation links */}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center gap-1">
             {items.map((item) => (
               <NavLink
                 key={item.to}

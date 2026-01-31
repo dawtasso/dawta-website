@@ -2,16 +2,16 @@ import type { ReactNode } from 'react';
 
 type TextProps = {
   children: ReactNode;
-  variant?: 'body' | 'muted' | 'error' | 'spectral';
+  variant?: 'body' | 'muted' | 'error' | 'accent';
   size?: 'sm' | 'base' | 'lg';
   className?: string;
 };
 
 const variantClasses: Record<NonNullable<TextProps['variant']>, string> = {
-  body: 'text-luminous-primary',
-  muted: 'text-luminous-secondary',
-  error: 'text-spectral-amber',
-  spectral: 'text-spectral',
+  body: 'text-ink-soft',
+  muted: 'text-ink-muted',
+  error: 'text-earth-terracotta',
+  accent: 'text-earth-forest',
 };
 
 const sizeClasses: Record<NonNullable<TextProps['size']>, string> = {
@@ -27,7 +27,7 @@ export default function Text({
   className = '',
 }: TextProps) {
   return (
-    <p className={`font-body ${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim()}>
+    <p className={`font-body leading-relaxed ${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim()}>
       {children}
     </p>
   );

@@ -12,13 +12,13 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 12 },
   visible: { 
     opacity: 1, 
     y: 0,
@@ -32,9 +32,9 @@ const itemVariants = {
 export default function ProjectsList({ projects }: ProjectsListProps) {
   if (projects.length === 0) {
     return (
-      <div className="text-center py-16">
-        <div className="card-glow rounded-lg p-12 max-w-md mx-auto">
-          <Text variant="muted" className="text-lg">
+      <div className="text-center py-12">
+        <div className="card-editorial p-10 max-w-md mx-auto">
+          <Text variant="muted">
             No projects found.
           </Text>
           <Text variant="muted" size="sm" className="mt-2">
@@ -47,7 +47,7 @@ export default function ProjectsList({ projects }: ProjectsListProps) {
 
   return (
     <motion.div
-      className="space-y-4"
+      className="space-y-3"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

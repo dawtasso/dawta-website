@@ -7,8 +7,6 @@ import {
   LoadingState,
   PageLayout,
   ProjectsList,
-  DiffractionLogo,
-  DataRay,
   Text,
 } from '../components';
 
@@ -18,79 +16,55 @@ export default function Home() {
     queryFn: fetchProjects,
   });
 
+  const activeCount = projects?.filter(p => p.status.toLowerCase() === 'active').length ?? 0;
+  const totalCount = projects?.length ?? 0;
+
   return (
     <PageLayout maxWidth="4xl">
-      {/* Hero section with large diffraction logo */}
-      <motion.section
-        className="flex items-center justify-between mb-16"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <div className="max-w-xl">
-          <PageHeader 
-            title="Projects" 
-            subtitle="Manage and track all dawta projects with luminous clarity" 
-          />
-        </div>
-        
-        {/* Large animated logo as visual anchor */}
+      <PageHeader 
+        title="Projects" 
+        subtitle="Track and manage initiatives across politics, economy, and environment" 
+      />
+
+      {/* Quick stats */}
+      {projects && projects.length > 0 && (
         <motion.div
-          className="hidden lg:block"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
+          className="flex gap-8 mb-10 pb-8 border-b border-black/5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
         >
-          <DiffractionLogo size="xl" />
-        </motion.div>
-      </motion.section>
-
-      {/* Stats preview section */}
-      <motion.section
-        className="grid grid-cols-3 gap-4 mb-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        {[
-          { label: 'Total Projects', value: projects?.length ?? '—' },
-          { label: 'Active', value: projects?.filter(p => p.status.toLowerCase() === 'active').length ?? '—' },
-          { label: 'Completed', value: projects?.filter(p => p.status.toLowerCase() === 'completed').length ?? '—' },
-        ].map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            className="card-glow rounded-lg p-5"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.4 + i * 0.1 }}
-          >
-            <Text variant="muted" size="sm" className="uppercase tracking-wider font-mono">
-              {stat.label}
+          <div>
+            <Text variant="muted" size="sm" className="uppercase tracking-wider text-xs">
+              Total
             </Text>
-            <p className="text-3xl font-display font-bold text-glare mt-2">
-              {stat.value}
+            <p className="text-2xl font-display font-semibold text-ink mt-1">
+              {totalCount}
             </p>
-          </motion.div>
-        ))}
-      </motion.section>
+          </div>
+          <div>
+            <Text variant="muted" size="sm" className="uppercase tracking-wider text-xs">
+              Active
+            </Text>
+            <p className="text-2xl font-display font-semibold text-earth-forest mt-1">
+              {activeCount}
+            </p>
+          </div>
+        </motion.div>
+      )}
 
-      {/* Data ray separator */}
-      <DataRay direction="horizontal" className="mb-12" />
+      {/* Content */}
+      {isLoading && <LoadingState message="Loading projects..." />}
 
-      {/* Projects list */}
-      <section>
-        {isLoading && <LoadingState message="Analyzing project data..." />}
+      {error && (
+        <ErrorMessage
+          title="Unable to load projects"
+          message={error.message}
+          hint="Make sure the backend is running: make start-backend"
+        />
+      )}
 
-        {error && (
-          <ErrorMessage
-            title="Error loading projects"
-            message={error.message}
-            hint="Make sure the backend is running: make start-backend"
-          />
-        )}
-
-        {projects && <ProjectsList projects={projects} />}
-      </section>
+      {projects && <ProjectsList projects={projects} />}
     </PageLayout>
   );
 }

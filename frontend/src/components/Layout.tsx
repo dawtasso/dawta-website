@@ -6,48 +6,24 @@ export default function Layout() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Ambient background gradients */}
-      <div className="fixed inset-0 pointer-events-none">
-        {/* Deep void base */}
-        <div className="absolute inset-0 bg-void-deep" />
-        
-        {/* Subtle spectral ambient glow in corners */}
-        <div 
-          className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 rounded-full"
-          style={{
-            background: 'radial-gradient(circle, rgba(142, 202, 230, 0.08) 0%, transparent 60%)',
-          }}
-        />
-        <div 
-          className="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2 rounded-full"
-          style={{
-            background: 'radial-gradient(circle, rgba(226, 149, 120, 0.06) 0%, transparent 60%)',
-          }}
-        />
-        
-        {/* Grid pattern overlay */}
-        <div 
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-            `,
-            backgroundSize: '60px 60px',
-          }}
-        />
-      </div>
+    <div className="min-h-screen bg-paper">
+      {/* Subtle warm texture */}
+      <div 
+        className="fixed inset-0 pointer-events-none opacity-30"
+        style={{
+          backgroundImage: `radial-gradient(circle at 20% 80%, rgba(122, 154, 122, 0.08) 0%, transparent 50%),
+                           radial-gradient(circle at 80% 20%, rgba(196, 120, 90, 0.06) 0%, transparent 50%)`,
+        }}
+      />
 
-      {/* Content */}
       <div className="relative z-10">
         <NavBar activePath={location.pathname} />
         <motion.main
           key={location.pathname}
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           <Outlet />
         </motion.main>

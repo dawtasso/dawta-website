@@ -1,6 +1,5 @@
 import { ResponsiveLine } from '@nivo/line';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 
 type DataPoint = {
   x: string | number;
@@ -20,45 +19,44 @@ type LineChartProps = {
   title?: string;
 };
 
-// Spectral color scale for data visualization
-const spectralColors = [
-  '#8ECAE6', // Sky blue
-  '#83C5BE', // Teal
-  '#E9C46A', // Gold
-  '#F4A261', // Orange
-  '#E29578', // Amber
-  '#00D9FF', // Cyan (chromatic)
-  '#FF006E', // Magenta (chromatic)
+// Earthy, natural color scale
+const earthColors = [
+  '#4A6741', // Forest
+  '#7A9A7A', // Sage
+  '#8B7355', // Clay
+  '#C4785A', // Terracotta
+  '#5B8A9A', // River
+  '#7BA3B5', // Sky
 ];
 
-// Dark theme for Nivo charts
-const darkTheme = {
+// Warm, readable theme
+const warmTheme = {
   background: 'transparent',
   text: {
     fontSize: 12,
-    fill: '#A0A0A0',
-    fontFamily: '"DM Sans", system-ui, sans-serif',
+    fill: '#6B6B6B',
+    fontFamily: '"Source Sans 3", system-ui, sans-serif',
   },
   axis: {
     domain: {
       line: {
-        stroke: 'rgba(255, 255, 255, 0.1)',
-        strokeWidth: 0.5,
+        stroke: 'rgba(0, 0, 0, 0.08)',
+        strokeWidth: 1,
       },
     },
     ticks: {
       line: {
-        stroke: 'rgba(255, 255, 255, 0.1)',
-        strokeWidth: 0.5,
+        stroke: 'rgba(0, 0, 0, 0.08)',
+        strokeWidth: 1,
       },
       text: {
-        fill: '#666666',
+        fill: '#6B6B6B',
         fontSize: 11,
       },
     },
     legend: {
       text: {
-        fill: '#A0A0A0',
+        fill: '#3D3D3D',
         fontSize: 12,
         fontWeight: 500,
       },
@@ -66,25 +64,25 @@ const darkTheme = {
   },
   grid: {
     line: {
-      stroke: 'rgba(255, 255, 255, 0.04)',
-      strokeWidth: 0.5,
+      stroke: 'rgba(0, 0, 0, 0.04)',
+      strokeWidth: 1,
     },
   },
   crosshair: {
     line: {
-      stroke: '#8ECAE6',
+      stroke: '#7A9A7A',
       strokeWidth: 1,
-      strokeOpacity: 0.5,
+      strokeOpacity: 0.6,
     },
   },
   tooltip: {
     container: {
-      background: '#1A1A1A',
-      color: '#FAFAFA',
+      background: 'white',
+      color: '#1A1A1A',
       fontSize: 12,
-      borderRadius: '6px',
-      boxShadow: '0 0 20px rgba(142, 202, 230, 0.2), 0 4px 20px rgba(0, 0, 0, 0.4)',
-      border: '0.5px solid rgba(255, 255, 255, 0.1)',
+      borderRadius: '3px',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+      border: '1px solid rgba(0, 0, 0, 0.08)',
     },
   },
 };
@@ -96,52 +94,33 @@ export default function LineChart({
   height = 400,
   title,
 }: LineChartProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <motion.div
-      className="relative card-glow rounded-lg overflow-hidden"
+      className="card-editorial overflow-hidden"
       style={{ height: height + 40 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
+      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
-      {/* Diffraction glow on hover */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(142, 202, 230, 0.1) 0%, transparent 50%)',
-        }}
-        animate={{
-          opacity: isHovered ? 1 : 0,
-          scale: isHovered ? 1.2 : 1,
-        }}
-        transition={{ duration: 0.4 }}
-      />
-
-      {/* Chart container */}
-      <div className="relative p-6" style={{ height }}>
+      <div className="p-6" style={{ height }}>
         {title && (
-          <h3 className="text-sm font-display font-medium text-luminous-secondary mb-4 tracking-wide uppercase">
+          <h3 className="text-xs font-body font-medium text-ink-muted mb-4 uppercase tracking-wider">
             {title}
           </h3>
         )}
         <ResponsiveLine
           data={data}
-          margin={{ top: 20, right: 30, bottom: 60, left: 70 }}
+          margin={{ top: 20, right: 30, bottom: 60, left: 60 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
             min: 'auto',
             max: 'auto',
           }}
-          colors={spectralColors}
+          colors={earthColors}
           lineWidth={2}
           enableArea={true}
-          areaOpacity={0.15}
-          areaBlendMode="screen"
+          areaOpacity={0.08}
           axisTop={null}
           axisRight={null}
           axisBottom={{
@@ -157,33 +136,20 @@ export default function LineChart({
             tickPadding: 8,
             tickRotation: 0,
             legend: yLegend,
-            legendOffset: -55,
+            legendOffset: -50,
             legendPosition: 'middle',
           }}
-          pointSize={8}
-          pointColor="#1A1A1A"
+          pointSize={6}
+          pointColor="white"
           pointBorderWidth={2}
           pointBorderColor={{ from: 'serieColor' }}
           pointLabelYOffset={-12}
           useMesh={true}
           enableSlices="x"
-          theme={darkTheme}
+          theme={warmTheme}
           motionConfig="gentle"
-          defs={[
-            {
-              id: 'gradientGlow',
-              type: 'linearGradient',
-              colors: [
-                { offset: 0, color: '#8ECAE6', opacity: 0.4 },
-                { offset: 100, color: '#E29578', opacity: 0 },
-              ],
-            },
-          ]}
         />
       </div>
-
-      {/* Bottom glow line */}
-      <div className="absolute bottom-0 left-6 right-6 h-[0.5px] data-ray opacity-40" />
     </motion.div>
   );
 }

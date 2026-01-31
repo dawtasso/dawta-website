@@ -3,164 +3,140 @@ import {
   PageHeader, 
   PageLayout, 
   LineChart, 
-  DataRay,
   Gallery,
   GalleryStat,
   Text,
+  DataRay,
 } from '../components';
 
 const sampleData = [
   {
     id: 'Engagement',
     data: [
-      { x: '2024-01', y: 12 },
-      { x: '2024-02', y: 19 },
-      { x: '2024-03', y: 15 },
-      { x: '2024-04', y: 22 },
-      { x: '2024-05', y: 18 },
-      { x: '2024-06', y: 25 },
+      { x: 'Jan', y: 12 },
+      { x: 'Feb', y: 19 },
+      { x: 'Mar', y: 15 },
+      { x: 'Apr', y: 22 },
+      { x: 'May', y: 18 },
+      { x: 'Jun', y: 25 },
     ],
   },
   {
-    id: 'Growth',
+    id: 'Impact',
     data: [
-      { x: '2024-01', y: 8 },
-      { x: '2024-02', y: 12 },
-      { x: '2024-03', y: 18 },
-      { x: '2024-04', y: 15 },
-      { x: '2024-05', y: 24 },
-      { x: '2024-06', y: 30 },
+      { x: 'Jan', y: 8 },
+      { x: 'Feb', y: 12 },
+      { x: 'Mar', y: 18 },
+      { x: 'Apr', y: 15 },
+      { x: 'May', y: 24 },
+      { x: 'Jun', y: 30 },
     ],
   },
 ];
 
-// Gallery items for the editorial grid showcase
 const galleryItems = [
   {
     id: 1,
     size: 'wide' as const,
-    content: <GalleryStat label="Total Views" value="12.4K" trend="up" description="Last 30 days" />,
+    content: <GalleryStat label="Community Reach" value="12.4K" trend="up" description="Past 30 days" />,
   },
   {
     id: 2,
     size: 'normal' as const,
-    content: <GalleryStat label="Conversion" value="3.2%" trend="up" />,
+    content: <GalleryStat label="Active Members" value="847" trend="up" />,
   },
   {
     id: 3,
     size: 'normal' as const,
-    content: <GalleryStat label="Bounce Rate" value="42%" trend="down" />,
+    content: <GalleryStat label="Projects" value="23" trend="neutral" />,
   },
   {
     id: 4,
     size: 'normal' as const,
-    content: <GalleryStat label="Sessions" value="8.1K" trend="neutral" />,
+    content: <GalleryStat label="Partners" value="12" trend="up" />,
   },
   {
     id: 5,
     size: 'normal' as const,
-    content: <GalleryStat label="Avg. Duration" value="2:34" trend="up" />,
+    content: <GalleryStat label="Events" value="8" trend="neutral" />,
   },
 ];
 
 export default function Report() {
   return (
-    <PageLayout maxWidth="6xl">
+    <PageLayout maxWidth="5xl">
       <PageHeader
         title="Report"
-        subtitle="Visual data analysis and insights through the prism of light"
+        subtitle="Insights and progress across our initiatives"
       />
 
-      {/* Main chart section */}
+      {/* Chart section */}
       <motion.section
-        className="mb-16"
-        initial={{ opacity: 0, y: 20 }}
+        className="mb-12"
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <div className="flex items-center justify-between mb-6">
-          <Text variant="muted" size="sm" className="uppercase tracking-wider font-mono">
-            Performance Overview
+        <div className="flex items-baseline justify-between mb-4">
+          <Text variant="muted" size="sm" className="uppercase tracking-wider text-xs">
+            Engagement Overview
           </Text>
-          <Text variant="muted" size="sm" className="font-mono">
-            Jan - Jun 2024
+          <Text variant="muted" size="sm">
+            Jan – Jun 2024
           </Text>
         </div>
         <LineChart 
           data={sampleData} 
           xLegend="Month" 
-          yLegend="Value" 
-          height={400}
+          yLegend="Score" 
+          height={360}
         />
       </motion.section>
 
-      {/* Data ray to guide toward insights */}
-      <div className="relative my-16">
-        <DataRay direction="horizontal" />
-        <motion.div
-          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 bg-void-deep"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <Text variant="muted" size="sm" className="uppercase tracking-widest font-mono">
-            Key Metrics
-          </Text>
-        </motion.div>
-      </div>
+      {/* Separator */}
+      <DataRay className="my-12" />
 
-      {/* Editorial offset gallery */}
+      {/* Metrics grid */}
       <motion.section
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
       >
+        <Text variant="muted" size="sm" className="uppercase tracking-wider text-xs mb-4">
+          Key Metrics
+        </Text>
         <Gallery items={galleryItems} />
       </motion.section>
 
-      {/* Additional insights section */}
+      {/* Insights */}
       <motion.section
-        className="mt-16"
-        initial={{ opacity: 0, y: 20 }}
+        className="mt-12 grid md:grid-cols-2 gap-4"
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Insight card 1 */}
-          <div className="card-glow rounded-lg p-8">
-            <Text variant="muted" size="sm" className="uppercase tracking-wider font-mono mb-4">
-              Analysis
-            </Text>
-            <p className="text-lg text-luminous-primary font-body leading-relaxed">
-              Growth trajectory shows a consistent upward trend with a 
-              <span className="text-spectral-sky font-semibold"> 67% increase </span>
-              over the reporting period.
-            </p>
-          </div>
+        <div className="card-editorial p-6">
+          <Text variant="muted" size="sm" className="uppercase tracking-wider text-xs mb-3">
+            Observation
+          </Text>
+          <p className="text-ink-soft leading-relaxed">
+            Community engagement shows consistent growth, with a 
+            <span className="text-earth-forest font-medium"> 67% increase </span>
+            over the reporting period. Environmental initiatives lead adoption.
+          </p>
+        </div>
 
-          {/* Insight card 2 */}
-          <div className="card-glow rounded-lg p-8">
-            <Text variant="muted" size="sm" className="uppercase tracking-wider font-mono mb-4">
-              Recommendation
-            </Text>
-            <p className="text-lg text-luminous-primary font-body leading-relaxed">
-              Focus on channels showing 
-              <span className="text-spectral-teal font-semibold"> high engagement </span>
-              to maximize conversion potential.
-            </p>
-          </div>
+        <div className="card-editorial p-6">
+          <Text variant="muted" size="sm" className="uppercase tracking-wider text-xs mb-3">
+            Next Steps
+          </Text>
+          <p className="text-ink-soft leading-relaxed">
+            Focus on 
+            <span className="text-earth-forest font-medium"> local partnerships </span>
+            to amplify reach. Economic literacy workshops show high potential.
+          </p>
         </div>
       </motion.section>
-
-      {/* Bottom signature ray */}
-      <motion.div
-        className="mt-20"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-      >
-        <DataRay direction="horizontal" thickness="thin" />
-      </motion.div>
     </PageLayout>
   );
 }
