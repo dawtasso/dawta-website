@@ -16,15 +16,15 @@ export default function Home() {
 
   return (
     <PageLayout maxWidth="4xl">
-      <PageHeader title="Projects" subtitle="Manage and track all dawta projects" />
+      <PageHeader title="Projets" subtitle="Analyses statistiques sur données publiques" />
 
-      {isLoading && <LoadingState message="Loading projects..." />}
+      {isLoading && <LoadingState message="Chargement des projets..." />}
 
       {error && (
         <ErrorMessage
-          title="Error loading projects"
+          title="Erreur de chargement"
           message={error.message}
-          hint="Make sure the backend is running: make start-backend"
+          hint="Vérifiez que le backend est lancé : make start-backend"
         />
       )}
 

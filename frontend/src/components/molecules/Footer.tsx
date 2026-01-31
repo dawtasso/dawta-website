@@ -20,8 +20,8 @@ const socialLinks: SocialLink[] = [
 ];
 
 const navLinks = [
-  { name: 'Projects', href: '/projects' },
-  { name: 'About', href: '/about' },
+  { name: 'Projets', href: '/projects' },
+  { name: 'À propos', href: '/about' },
 ];
 
 export default function Footer() {
@@ -37,7 +37,7 @@ export default function Footer() {
               <Logo size="md" className="brightness-0 invert" />
             </Link>
             <p className="text-sm text-slate-400 leading-relaxed mb-6">
-              Empowering data-driven decisions with intelligent analytics and reporting solutions.
+              Association française d'analyse statistique sur données publiques.
             </p>
             {/* Social Links */}
             <div className="flex items-center space-x-4">
@@ -78,10 +78,10 @@ export default function Footer() {
           {/* Support & Donate */}
           <div>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
-              Support Us
+              Soutenir
             </h3>
             <p className="text-sm text-slate-400 mb-4">
-              Help us continue building innovative solutions.
+              Aidez-nous à poursuivre nos analyses.
             </p>
             <a
               href="https://donate.stripe.com/dawta"
@@ -92,7 +92,7 @@ export default function Footer() {
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
-              Donate
+              Faire un don
             </a>
           </div>
         </div>
@@ -101,10 +101,10 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-slate-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm text-slate-500">
-              © {currentYear} Dawta. All rights reserved.
+              © {currentYear} Dawta. Tous droits réservés.
             </p>
             <p className="text-sm text-slate-500">
-              Made with care for data analytics
+              Données ouvertes, analyses indépendantes
             </p>
           </div>
         </div>

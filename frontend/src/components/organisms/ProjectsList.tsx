@@ -9,7 +9,7 @@ export default function ProjectsList({ projects }: ProjectsListProps) {
   if (projects.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No projects found.</p>
+        <p className="text-gray-500">Aucun projet trouvé.</p>
       </div>
     );
   }

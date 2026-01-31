@@ -12,9 +12,9 @@ type NavBarProps = {
 };
 
 const defaultNavItems: NavItem[] = [
-  { to: '/', label: 'Home' },
-  { to: '/projects', label: 'Projects' },
-  { to: '/about', label: 'About' },
+  { to: '/', label: 'Accueil' },
+  { to: '/projects', label: 'Projets' },
+  { to: '/about', label: 'À propos' },
 ];
 
 export default function NavBar({ activePath, items = defaultNavItems }: NavBarProps) {

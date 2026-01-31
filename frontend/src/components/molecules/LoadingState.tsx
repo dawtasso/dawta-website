@@ -4,7 +4,7 @@ type LoadingStateProps = {
   message?: string;
 };
 
-export default function LoadingState({ message = 'Loading...' }: LoadingStateProps) {
+export default function LoadingState({ message = 'Chargement...' }: LoadingStateProps) {
   return (
     <div className="flex items-center space-x-3">
       <Spinner size="sm" />
