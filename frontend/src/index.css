@@ -1,10 +1,285 @@
-@import '@fontsource/inter';
+/* Typography imports - distinctive, non-generic fonts */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Custom Properties - The Diffraction Design System */
+:root {
+  /* Core colors */
+  --color-void: #1A1A1A;
+  --color-void-deep: #0D0D0D;
+  --color-void-soft: #242424;
+  --color-void-surface: #2A2A2A;
+  
+  --color-paper: #FDFCFB;
+  --color-paper-warm: #F8F6F3;
+  
+  /* Spectral palette */
+  --color-spectral-amber: #E29578;
+  --color-spectral-orange: #F4A261;
+  --color-spectral-gold: #E9C46A;
+  --color-spectral-teal: #83C5BE;
+  --color-spectral-sky: #8ECAE6;
+  
+  /* Chromatic aberration accents */
+  --color-chromatic-cyan: #00D9FF;
+  --color-chromatic-magenta: #FF006E;
+  --color-chromatic-yellow: #FFE66D;
+  
+  /* Text colors - dark mode default */
+  --color-text-primary: #FAFAFA;
+  --color-text-secondary: #A0A0A0;
+  --color-text-muted: #666666;
+  
+  /* Background */
+  --color-bg: var(--color-void);
+  --color-bg-elevated: var(--color-void-soft);
+  
+  /* Borders */
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-spectral: rgba(142, 202, 230, 0.2);
+}
+
+/* Light mode variant */
+.light-mode {
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #666666;
+  --color-text-muted: #999999;
+  --color-bg: var(--color-paper);
+  --color-bg-elevated: var(--color-paper-warm);
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-spectral: rgba(226, 149, 120, 0.3);
+}
+
 @layer base {
-  body {
-    @apply font-sans antialiased;
+  html {
+    scroll-behavior: smooth;
   }
+  
+  body {
+    @apply antialiased;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', system-ui, sans-serif;
+  }
+  
+  code, pre {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Ultra-thin borders - light ray aesthetic */
+  .border-ray {
+    border-width: 0.5px;
+    border-color: var(--color-border);
+  }
+  
+  /* Selection styling */
+  ::selection {
+    background: var(--color-spectral-sky);
+    color: var(--color-void-deep);
+  }
+}
+
+@layer components {
+  /* Glare text effect - text caught in a beam of light */
+  .text-glare {
+    background: linear-gradient(
+      120deg,
+      var(--color-text-primary) 0%,
+      var(--color-text-primary) 40%,
+      var(--color-spectral-sky) 50%,
+      var(--color-text-primary) 60%,
+      var(--color-text-primary) 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glare-sweep 4s ease-in-out infinite;
+  }
+  
+  .text-glare-static {
+    background: linear-gradient(
+      120deg,
+      var(--color-text-primary) 0%,
+      var(--color-spectral-sky) 50%,
+      var(--color-text-primary) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Spectral border - chromatic aberration effect */
+  .border-spectral {
+    position: relative;
+  }
+  
+  .border-spectral::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(
+      90deg,
+      var(--color-chromatic-cyan) 0%,
+      transparent 20%,
+      transparent 80%,
+      var(--color-chromatic-magenta) 100%
+    );
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Glow card - for data visualizations */
+  .card-glow {
+    background: var(--color-void-surface);
+    border: 0.5px solid var(--color-border);
+    box-shadow: 
+      0 0 0 1px var(--color-border),
+      0 4px 20px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(142, 202, 230, 0.05);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  
+  .card-glow:hover {
+    box-shadow: 
+      0 0 0 1px var(--color-border-spectral),
+      0 8px 40px rgba(0, 0, 0, 0.4),
+      0 0 60px rgba(142, 202, 230, 0.15),
+      0 0 80px rgba(226, 149, 120, 0.1);
+    transform: translateY(-2px);
+  }
+
+  /* Diffraction hover effect */
+  .diffract-hover {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .diffract-hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(142, 202, 230, 0.15) 0%,
+      rgba(226, 149, 120, 0.1) 25%,
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  .diffract-hover:hover::after {
+    opacity: 1;
+  }
+
+  /* Data ray separator */
+  .data-ray {
+    height: 0.5px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-spectral-amber) 15%,
+      var(--color-spectral-gold) 35%,
+      var(--color-spectral-teal) 65%,
+      var(--color-spectral-sky) 85%,
+      transparent 100%
+    );
+    opacity: 0.6;
+  }
+  
+  .data-ray-vertical {
+    width: 0.5px;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      var(--color-spectral-amber) 15%,
+      var(--color-spectral-gold) 35%,
+      var(--color-spectral-teal) 65%,
+      var(--color-spectral-sky) 85%,
+      transparent 100%
+    );
+    opacity: 0.6;
+  }
+}
+
+@layer utilities {
+  /* Glow utilities */
+  .glow-spectral {
+    box-shadow: 
+      0 0 30px rgba(226, 149, 120, 0.3),
+      0 0 60px rgba(142, 202, 230, 0.2);
+  }
+  
+  .text-spectral {
+    background: linear-gradient(90deg, 
+      var(--color-spectral-amber),
+      var(--color-spectral-orange),
+      var(--color-spectral-gold),
+      var(--color-spectral-teal),
+      var(--color-spectral-sky)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* Animations */
+@keyframes glare-sweep {
+  0%, 100% {
+    background-position: 200% 50%;
+  }
+  50% {
+    background-position: -100% 50%;
+  }
+}
+
+@keyframes ray-pulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes diffraction-expand {
+  0% {
+    transform: scale(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-void-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-void-soft);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-spectral-teal);
 }

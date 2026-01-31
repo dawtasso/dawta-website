@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { Heading, Text } from '../atoms';
+import { motion } from 'framer-motion';
+import { Heading, Text, DataRay } from '../atoms';
 
 type PageHeaderProps = {
   title: string;
@@ -9,19 +10,32 @@ type PageHeaderProps = {
 
 export default function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
   return (
-    <header className="mb-8">
-      <div className="flex items-start justify-between">
+    <motion.header
+      className="mb-12"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+    >
+      <div className="flex items-start justify-between mb-6">
         <div>
-          <Heading level={1}>{title}</Heading>
+          <Heading level={1} glare={true}>
+            {title}
+          </Heading>
           {subtitle && (
-            <Text variant="muted" className="mt-2">
+            <Text variant="muted" size="lg" className="mt-3 max-w-xl">
               {subtitle}
             </Text>
           )}
         </div>
-        {actions && <div className="flex space-x-2">{actions}</div>}
+        {actions && (
+          <div className="flex space-x-3">
+            {actions}
+          </div>
+        )}
       </div>
-    </header>
+      
+      {/* Spectral data ray separator */}
+      <DataRay direction="horizontal" className="mt-6" />
+    </motion.header>
   );
 }
-
