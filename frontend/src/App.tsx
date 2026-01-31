@@ -2,7 +2,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
-import Report from './pages/Report';
+import Projects from './pages/Projects';
+import About from './pages/About';
+import ProjectDetail from './pages/ProjectDetail';
 
 const queryClient = new QueryClient();
 
@@ -13,7 +15,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path="report" element={<Report />} />
+            <Route path="projects" element={<Projects />} />
+            <Route path="projects/:projectId" element={<ProjectDetail />} />
+            <Route path="about" element={<About />} />
           </Route>
         </Routes>
       </BrowserRouter>

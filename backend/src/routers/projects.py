@@ -1,7 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import FileResponse, Response
 
 from src.models import Project
-from src.services import ProjectService
+from src.services import DATA_DIR, ProjectService
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
@@ -10,3 +11,48 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 async def get_projects():
     """Get list of all projects."""
     return ProjectService.get_projects()
+
+
+@router.get("/{project_id}/files/{file_type}")
+async def get_project_file(project_id: str, file_type: str):
+    """Get project file (slide or report PDF)."""
+    if file_type not in ["slide", "report"]:
+        raise HTTPException(
+            status_code=400, detail="file_type must be 'slide' or 'report'"
+        )
+
+    file_path = DATA_DIR / project_id / f"{file_type}.pdf"
+
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail=f"File not found: {file_type}.pdf")
+
+    return FileResponse(
+        file_path,
+        media_type="application/pdf",
+        filename=f"{project_id}-{file_type}.pdf",
+    )
+
+
+@router.get("/{project_id}/content/{content_type}")
+async def get_project_content(project_id: str, content_type: str):
+    """Get project content (summary or partial_report markdown)."""
+    if content_type not in ["summary", "partial_report"]:
+        raise HTTPException(
+            status_code=400, detail="content_type must be 'summary' or 'partial_report'"
+        )
+
+    # Map content_type to filename
+    filename = (
+        "partial_report.md"
+        if content_type == "partial_report"
+        else f"{content_type}.md"
+    )
+    file_path = DATA_DIR / project_id / filename
+
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail=f"File not found: {filename}")
+
+    with open(file_path, encoding="utf-8") as f:
+        content = f.read()
+
+    return Response(content=content, media_type="text/markdown")

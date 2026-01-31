@@ -1,10 +1,17 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export interface Project {
-  id: number;
-  name: string;
+  id: string;
+  title: string;
   description: string;
+  longDescription?: string;
   status: string;
+  publishedAt?: string;
+  hasSlide: boolean;
+  hasReport: boolean;
+  hasSummary: boolean;
+  hasPartialReport: boolean;
+  githubUrl?: string;
 }
 
 export async function fetchProjects(): Promise<Project[]> {
@@ -20,5 +27,13 @@ export async function fetchProjects(): Promise<Project[]> {
     }
     throw error;
   }
+}
+
+export function getFileUrl(projectId: string, type: 'slide' | 'report'): string {
+  return `${API_BASE_URL}/api/projects/${projectId}/files/${type}`;
+}
+
+export function getContentUrl(projectId: string, type: 'summary' | 'partial_report'): string {
+  return `${API_BASE_URL}/api/projects/${projectId}/content/${type}`;
 }
 

@@ -12,13 +12,14 @@ type NavBarProps = {
 };
 
 const defaultNavItems: NavItem[] = [
-  { to: '/', label: 'Home' },
-  { to: '/report', label: 'Report' },
+  { to: '/', label: 'Accueil' },
+  { to: '/projects', label: 'Projets' },
+  { to: '/about', label: 'À propos' },
 ];
 
 export default function NavBar({ activePath, items = defaultNavItems }: NavBarProps) {
   return (
-    <nav className="border-b border-gray-200">
+    <nav className="border-b border-theme-light bg-theme-primary">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center space-x-8">
           <Link to="/" className="flex items-center py-4">

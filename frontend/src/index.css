@@ -3,8 +3,115 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Mergila';
+  src: url('/fonts/mergila/Mergila-Regular.otf') format('opentype'),
+       url('/fonts/mergila/Mergila-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mergila';
+  src: url('/fonts/mergila/Mergila-Italic.otf') format('opentype'),
+       url('/fonts/mergila/Mergila-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* 
+   * THEME COLORS - LIGHT MODE (white background, dark text)
+   * Logo grey (#535353) used only around logo for smooth transition
+   * 
+   * To switch to dark theme, swap these values:
+   *   --color-bg-primary: #1f1f1f;      (was #ffffff)
+   *   --color-bg-secondary: #2a2a2a;    (was #f5f5f5)
+   *   --color-text-primary: #ffffff;    (was #1a1a1a)
+   *   --color-text-secondary: #e8e8e8;   (was #535353)
+   */
+  --color-bg-primary: #ffffff;      /* Main background - white */
+  --color-bg-secondary: #f5f5f5;    /* Cards, sections - light grey */
+  --color-bg-tertiary: #e8e8e8;     /* Hover states - medium light grey */
+  --color-bg-logo: #535353;         /* Logo area - matches logo grey for smooth transition */
+  --color-text-primary: #1a1a1a;    /* Main text - dark */
+  --color-text-secondary: #535353;   /* Secondary text - grey */
+  --color-text-tertiary: #6d6d6d;    /* Muted text - medium grey */
+  --color-border: #d1d1d1;          /* Borders - light grey */
+  --color-border-light: #e8e8e8;    /* Light borders - very light grey */
+  --logo-url: url('/logo_bg_white.png');  /* Logo for light background */
+}
+
 @layer base {
   body {
     @apply font-sans antialiased;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+  }
+}
+
+@layer components {
+  .bg-theme-primary {
+    background-color: var(--color-bg-primary);
+  }
+  
+  .bg-theme-secondary {
+    background-color: var(--color-bg-secondary);
+  }
+  
+  .bg-theme-tertiary {
+    background-color: var(--color-bg-tertiary);
+  }
+  
+  .bg-theme-logo {
+    background-color: var(--color-bg-logo);
+  }
+  
+  .text-theme-primary {
+    color: var(--color-text-primary);
+  }
+  
+  .text-theme-secondary {
+    color: var(--color-text-secondary);
+  }
+  
+  .text-theme-tertiary {
+    color: var(--color-text-tertiary);
+  }
+  
+  .border-theme {
+    border-color: var(--color-border);
+  }
+  
+  .border-theme-light {
+    border-color: var(--color-border-light);
+  }
+  
+  .font-mergila {
+    font-family: 'Mergila', serif;
+  }
+}
+
+@layer utilities {
+  .diffraction-pattern {
+    background-image: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 1px,
+      rgba(83, 83, 83, 0.02) 1px,
+      rgba(83, 83, 83, 0.02) 2px
+    );
+  }
+  
+  .diffraction-pattern-vertical {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(83, 83, 83, 0.02) 1px,
+      rgba(83, 83, 83, 0.02) 2px
+    );
   }
 }
