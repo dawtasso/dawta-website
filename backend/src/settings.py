@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -26,7 +27,20 @@ class Settings(BaseSettings):
     api_prefix: str = "/api"
 
     # CORS settings
-    cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+    cors_origins: list[str] = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://dawta.netlify.app",
+    ]
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v):
+        """Parse CORS origins from comma-separated string if provided as string."""
+        if isinstance(v, str):
+            # Split by comma and strip whitespace, filter out empty strings
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
 
     # Server settings
     host: str = "0.0.0.0"
