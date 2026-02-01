@@ -14,8 +14,12 @@ RUN uv sync --frozen
 # Copy application code
 COPY backend/ .
 
-# Copy data folder
-COPY data/ ./data/
+# Copy data folder with explicit structure preservation
+# This ensures all files including projects.json are copied
+COPY data ./data
+
+# Verify data files are copied (for debugging)
+RUN ls -la /app/data/ && test -f /app/data/projects.json || (echo "ERROR: projects.json not found!" && exit 1)
 
 # Expose port (Railway will provide PORT env var)
 EXPOSE 8000

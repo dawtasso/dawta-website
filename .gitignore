@@ -241,7 +241,8 @@ Temporary Items
 
 # Data folder artifacts (keep structure, ignore content)
 data/*.pdf
-data/*.json
 data/instagram/*
+# Allow projects.json as it's required metadata
+!data/projects.json
 !data/.gitkeep
 !data/README.md
