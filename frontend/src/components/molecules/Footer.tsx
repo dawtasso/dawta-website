@@ -25,7 +25,7 @@ export default function Footer() {
 
           {/* Donate button */}
           <Button
-            href="https://donate.stripe.com/dawta"
+            href="https://buymeacoffee.com/dawta"
             target="_blank"
             rel="noopener noreferrer"
             size="md"

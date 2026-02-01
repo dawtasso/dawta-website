@@ -3,8 +3,22 @@ from fastapi.responses import FileResponse, Response
 
 from src.models import Project
 from src.services import DATA_DIR, ProjectService
+from src.settings import settings
 
 router = APIRouter(prefix="/projects", tags=["projects"])
+
+
+@router.get("/debug")
+async def debug_info():
+    """Debug endpoint to check data directory configuration."""
+    projects_file = DATA_DIR / "projects.json"
+    return {
+        "data_dir": str(DATA_DIR),
+        "data_dir_from_settings": settings.data_dir,
+        "projects_file_exists": projects_file.exists(),
+        "projects_file_path": str(projects_file),
+        "data_dir_exists": DATA_DIR.exists(),
+    }
 
 
 @router.get("", response_model=list[Project])
