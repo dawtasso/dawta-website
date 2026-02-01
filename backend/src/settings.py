@@ -31,6 +31,8 @@ class Settings(BaseSettings):
         "http://localhost:5173",
         "http://localhost:3000",
         "https://dawta.netlify.app",
+        "https://dawta.fr",
+        "https://www.dawta.fr",
     ]
 
     @field_validator("cors_origins", mode="before")
