@@ -40,10 +40,16 @@ async def get_project_file(project_id: str, file_type: str):
     if not file_path.exists():
         raise HTTPException(status_code=404, detail=f"File not found: {file_type}.pdf")
 
+    # Use inline disposition for slides (to view in browser), attachment for reports (to download)
+    disposition = "inline" if file_type == "slide" else "attachment"
+
     return FileResponse(
         file_path,
         media_type="application/pdf",
         filename=f"{project_id}-{file_type}.pdf",
+        headers={
+            "Content-Disposition": f'{disposition}; filename="{project_id}-{file_type}.pdf"'
+        },
     )
 
 

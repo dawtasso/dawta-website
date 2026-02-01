@@ -1,12 +1,11 @@
 import json
-import logging
 from pathlib import Path
 from typing import Any, Dict, List
 
+from loguru import logger
+
 from .models import Project
 from .settings import settings
-
-logger = logging.getLogger(__name__)
 
 DATA_DIR = Path(settings.data_dir)
 

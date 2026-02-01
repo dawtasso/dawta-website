@@ -6,8 +6,8 @@
     "description": "L'ambition de ce projet est de comptabiliser les émissions de CO2 émises par les clubs de football masculin de ligue 1 lors de leurs déplacements.",
     "longDescription": null,
     "status": "published",
-    "publishedAt": null,
-    "hasSlide": false,
+    "publishedAt": "2026-02-01",
+    "hasSlide": true,
     "hasReport": true
   }
 ]
