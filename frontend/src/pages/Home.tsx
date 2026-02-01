@@ -5,8 +5,8 @@ export default function Home() {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center">
       <h1 className="text-5xl font-mergila font-semibold text-theme-primary mb-8 italic">Dawta</h1>
-      <div className="bg-white rounded-lg p-12 mb-8">
-        <Logo size="lg" forceLight />
+      <div className="mb-8">
+        <Logo size="lg" className="h-24" />
       </div>
       <Link
         to="/projects"
