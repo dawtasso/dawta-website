@@ -2,10 +2,6 @@
 
 Le Tableau 1 présente l'ensemble des trajets réalisés lors de la saison 2024/2025 par les équipes de Ligue 1 avec le mode de transport emprunté. Les données utilisées proviennent dans leur majorité des données du compte Ligue 1 | ON AIR. Certains trajets manquants ont ensuite été complétés à l'aide d'autres sources et hypothèses, identifiées selon le code couleur présenté dans le Tableau 2.
 
-## Les Résultats
-
-Les principaux résultats obtenus sont présentés sur notre page instagram, et bientôt ici !
-
 ## Les Limites
 
 1. Les émissions calculées doivent être considéré comme conservatrices, notamment pour l'avion, pour plusieurs raisons :
