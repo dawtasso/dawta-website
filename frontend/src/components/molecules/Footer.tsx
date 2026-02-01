@@ -19,7 +19,7 @@ export default function Footer() {
               </svg>
             </a>
             <p className="text-sm text-theme-tertiary">
-              Partagez en mentionnant
+              Suivez-nous sur Instagram
             </p>
           </div>
 

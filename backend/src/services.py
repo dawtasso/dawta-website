@@ -18,13 +18,13 @@ class ProjectService:
     def get_projects() -> List[Project]:
         """Get list of projects from JSON file."""
         projects_file: Path = DATA_DIR / "projects.json"
-        
+
         # Log data directory info for debugging
         logger.info(f"Data directory: {DATA_DIR}")
         logger.info(f"Data directory exists: {DATA_DIR.exists()}")
         logger.info(f"Projects file path: {projects_file}")
         logger.info(f"Projects file exists: {projects_file.exists()}")
-        
+
         if not projects_file.exists():
             logger.warning(f"Projects file not found at {projects_file}")
             if DATA_DIR.exists():
