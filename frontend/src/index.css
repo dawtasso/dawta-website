@@ -41,7 +41,7 @@
   --color-text-tertiary: #6d6d6d;    /* Muted text - medium grey */
   --color-border: #d1d1d1;          /* Borders - light grey */
   --color-border-light: #e8e8e8;    /* Light borders - very light grey */
-  --logo-url: url('/logo_bg_white.png');  /* Logo for light background */
+  --logo-url: url('/logo_bg_white.svg');  /* Logo for light background */
 }
 
 @layer base {
