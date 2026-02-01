@@ -1,4 +1,16 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _get_default_data_dir() -> str:
+    """Calculate default data directory path.
+
+    For local development: goes up from backend/src to repo root, then into data/
+    For Docker: can be overridden via DATA_DIR environment variable to /app/data
+    """
+    # backend/src/settings.py -> backend/src -> backend -> repo root -> data
+    return str(Path(__file__).parent.parent.parent / "data")
 
 
 class Settings(BaseSettings):
@@ -19,6 +31,10 @@ class Settings(BaseSettings):
     # Server settings
     host: str = "0.0.0.0"
     port: int = 8000
+
+    # Data directory settings
+    # Default works for local development, override with DATA_DIR=/app/data for Docker
+    data_dir: str = _get_default_data_dir()
 
 
 settings = Settings()

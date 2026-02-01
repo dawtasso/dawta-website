@@ -3,8 +3,9 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from .models import Project
+from .settings import settings
 
-DATA_DIR = Path(__file__).parent.parent.parent / "data"
+DATA_DIR = Path(settings.data_dir)
 
 
 class ProjectService:
