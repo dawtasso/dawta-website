@@ -30,7 +30,7 @@ class Settings(BaseSettings):
 
     # Server settings
     host: str = "0.0.0.0"
-    port: int = 8000
+    port: int = 8000  # Railway provides PORT env var automatically
 
     # Data directory settings
     # Default works for local development, override with DATA_DIR=/app/data for Docker
