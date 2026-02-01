@@ -1,32 +1,10 @@
 import { useState } from 'react';
 import { getFileUrl, type Project } from '../../api/client';
-import { Heading, StatusBadge, Text, Button } from '../atoms';
+import { Heading, Text, Button } from '../atoms';
 
 type ProjectCardProps = {
   project: Project;
 };
-
-function getStatusVariant(status: string) {
-  switch (status.toLowerCase()) {
-    case 'published':
-      return 'success' as const;
-    case 'draft':
-      return 'warning' as const;
-    default:
-      return 'default' as const;
-  }
-}
-
-function getStatusLabel(status: string) {
-  switch (status.toLowerCase()) {
-    case 'published':
-      return 'Publié';
-    case 'draft':
-      return 'Brouillon';
-    default:
-      return status;
-  }
-}
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
