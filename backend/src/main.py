@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.routers import projects
+from src.routers import judgments, projects
 from src.settings import settings
 
 # Configure logging
@@ -32,6 +32,7 @@ def create_app() -> FastAPI:
 
     # Include routers
     app.include_router(projects.router, prefix=settings.api_prefix)
+    app.include_router(judgments.router, prefix=settings.api_prefix)
 
     return app
 

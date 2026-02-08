@@ -4,4 +4,5 @@ export { default as ErrorMessage } from './ErrorMessage';
 export { default as LoadingState } from './LoadingState';
 export { default as PageHeader } from './PageHeader';
 export { default as Footer } from './Footer';
+export { default as SwipeCard } from './SwipeCard';
 

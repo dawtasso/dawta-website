@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Projects from './pages/Projects';
 import About from './pages/About';
 import ProjectDetail from './pages/ProjectDetail';
+import JudgeSurveyVote from './pages/JudgeSurveyVote';
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="projects" element={<Projects />} />
             <Route path="projects/:projectId" element={<ProjectDetail />} />
+            <Route path="projects/ue-pair-correlation/judge" element={<JudgeSurveyVote />} />
             <Route path="about" element={<About />} />
           </Route>
         </Routes>

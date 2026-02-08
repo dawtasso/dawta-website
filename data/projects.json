@@ -9,6 +9,17 @@
     "publishedAt": "2026-02-01",
     "hasSlide": true,
     "hasReport": true
+  },
+  {
+    "id": "ue-pair-correlation",
+    "title": "Corrélation Sondages-Votes UE",
+    "description": "Analysez les correspondances entre les questions des sondages Eurobaromètre et les votes du Parlement Européen. Participez en jugeant la pertinence des correspondances.",
+    "longDescription": "Ce projet étudie la corrélation entre l'opinion publique européenne (capturée par les sondages Eurobaromètre) et les actions législatives du Parlement Européen. Aidez-nous à évaluer si notre algorithme de correspondance identifie correctement les liens entre ce que pensent les citoyens et ce que vote le Parlement.",
+    "status": "published",
+    "publishedAt": "2026-02-08",
+    "hasSlide": false,
+    "hasReport": false,
+    "hasJudgeFeature": true
   }
 ]
 

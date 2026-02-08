@@ -11,7 +11,32 @@ export interface Project {
   hasReport: boolean;
   hasSummary: boolean;
   hasPartialReport: boolean;
+  hasJudgeFeature?: boolean;
   githubUrl?: string;
+}
+
+export interface SurveyVoteMatch {
+  questionId: string;
+  voteId: number;
+  questionText: string;
+  voteSummary: string;
+  similarityScore: number;
+  llmScore: number;
+  llmGo: boolean;
+}
+
+export interface JudgmentStats {
+  thumbsUp: number;
+  thumbsDown: number;
+}
+
+export interface JudgmentOverallStats {
+  totalMatches: number;
+  matchesJudged: number;
+  totalJudgments: number;
+  thumbsUp: number;
+  thumbsDown: number;
+  agreementRate: number;
 }
 
 export async function fetchProjects(): Promise<Project[]> {
@@ -35,5 +60,48 @@ export function getFileUrl(projectId: string, type: 'slide' | 'report'): string 
 
 export function getContentUrl(projectId: string, type: 'summary' | 'partial_report'): string {
   return `${API_BASE_URL}/api/projects/${projectId}/content/${type}`;
+}
+
+// Judgments API
+export async function fetchRandomMatch(): Promise<SurveyVoteMatch> {
+  const response = await fetch(`${API_BASE_URL}/api/judgments/matches/random`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch match: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}
+
+export async function fetchAllMatches(): Promise<SurveyVoteMatch[]> {
+  const response = await fetch(`${API_BASE_URL}/api/judgments/matches`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch matches: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}
+
+export async function submitJudgment(
+  questionId: string,
+  voteId: number,
+  thumbsUp: boolean
+): Promise<JudgmentStats> {
+  const response = await fetch(`${API_BASE_URL}/api/judgments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ questionId, voteId, thumbsUp }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to submit judgment: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}
+
+export async function fetchJudgmentStats(): Promise<JudgmentOverallStats> {
+  const response = await fetch(`${API_BASE_URL}/api/judgments/stats`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch stats: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
 }
 
