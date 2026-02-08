@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
   fetchRandomMatch,
   submitJudgment,
@@ -15,7 +15,6 @@ import {
 } from '../components';
 
 export default function JudgeSurveyVote() {
-  const queryClient = useQueryClient();
   const [judgedCount, setJudgedCount] = useState(0);
   const [lastResult, setLastResult] = useState<{ thumbsUp: boolean; stats: { thumbsUp: number; thumbsDown: number } } | null>(null);
 
