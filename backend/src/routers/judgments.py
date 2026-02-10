@@ -36,3 +36,9 @@ async def get_stats():
     """Get aggregated judgment statistics."""
     return JudgmentService.get_stats()
 
+
+@router.get("/export")
+async def export_judgments():
+    """Export all judgments as JSON (for backup)."""
+    return JudgmentService.export_judgments()
+
