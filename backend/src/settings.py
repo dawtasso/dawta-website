@@ -2,7 +2,10 @@ from pathlib import Path
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def _get_default_data_dir() -> str:
     """Calculate default data directory path.
@@ -52,5 +55,11 @@ class Settings(BaseSettings):
     # Default works for local development, override with DATA_DIR=/app/data for Docker
     data_dir: str = _get_default_data_dir()
 
+    # Supabase settings
+    supabase_url: str = os.getenv("SUPABASE_URL")
+    supabase_key: str = os.getenv("SUPABASE_KEY")
+
 
 settings = Settings()
+
+DATA_DIR = Path(settings.data_dir)

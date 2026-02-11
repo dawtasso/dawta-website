@@ -16,13 +16,16 @@ export interface Project {
 }
 
 export interface SurveyVoteMatch {
-  questionId: string;
-  voteId: number;
-  questionText: string;
-  voteSummary: string;
-  similarityScore: number;
-  llmScore: number;
-  llmGo: boolean;
+  matchId: string;
+  questionId?: string;
+  questionIndex?: string;
+  questionText?: string;
+  fileName?: string;
+  voteId?: number;
+  voteSummary?: string;
+  similarityScore?: number;
+  llmScore?: number;
+  llmGo?: boolean;
 }
 
 export interface JudgmentStats {
@@ -37,6 +40,11 @@ export interface JudgmentOverallStats {
   thumbsUp: number;
   thumbsDown: number;
   agreementRate: number;
+}
+
+export interface JudgmentEntry {
+  matchId: string;
+  thumbsUp: boolean;
 }
 
 export async function fetchProjects(): Promise<Project[]> {
@@ -79,17 +87,13 @@ export async function fetchAllMatches(): Promise<SurveyVoteMatch[]> {
   return response.json();
 }
 
-export async function submitJudgment(
-  questionId: string,
-  voteId: number,
-  thumbsUp: boolean
-): Promise<JudgmentStats> {
+export async function submitJudgment(matchId: string, thumbsUp: boolean): Promise<JudgmentStats> {
   const response = await fetch(`${API_BASE_URL}/api/judgments`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ questionId, voteId, thumbsUp }),
+    body: JSON.stringify({ matchId, thumbsUp }),
   });
   if (!response.ok) {
     throw new Error(`Failed to submit judgment: ${response.status} ${response.statusText}`);
@@ -105,3 +109,10 @@ export async function fetchJudgmentStats(): Promise<JudgmentOverallStats> {
   return response.json();
 }
 
+export async function fetchJudgments(): Promise<JudgmentEntry[]> {
+  const response = await fetch(`${API_BASE_URL}/api/judgments/all`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch judgments: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}

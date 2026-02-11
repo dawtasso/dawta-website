@@ -21,15 +21,18 @@ class Project(BaseModel):
 
 
 class SurveyVoteMatch(BaseModel):
-    """Survey-vote match from the CSV data."""
+    """Survey-vote match from Supabase."""
 
-    question_id: str = Field(alias="questionId")
-    vote_id: int = Field(alias="voteId")
-    question_text: str = Field(alias="questionText")
-    vote_summary: str = Field(alias="voteSummary")
-    similarity_score: float = Field(alias="similarityScore")
-    llm_score: int = Field(alias="llmScore")
-    llm_go: bool = Field(alias="llmGo")
+    match_id: str = Field(alias="matchId")
+    question_id: str | None = Field(None, alias="questionId")
+    question_index: str | None = Field(None, alias="questionIndex")
+    question_text: str | None = Field(None, alias="questionText")
+    file_name: str | None = Field(None, alias="fileName")
+    vote_id: int | None = Field(None, alias="voteId")
+    vote_summary: str | None = Field(None, alias="voteSummary")
+    similarity_score: float | None = Field(None, alias="similarityScore")
+    llm_score: int | None = Field(None, alias="llmScore")
+    llm_go: bool | None = Field(None, alias="llmGo")
 
     model_config = {"populate_by_name": True}
 
@@ -46,8 +49,7 @@ class JudgmentStats(BaseModel):
 class JudgmentRequest(BaseModel):
     """Request body for submitting a judgment."""
 
-    question_id: str = Field(alias="questionId")
-    vote_id: int = Field(alias="voteId")
+    match_id: str = Field(alias="matchId")
     thumbs_up: bool = Field(alias="thumbsUp")
 
     model_config = {"populate_by_name": True}
