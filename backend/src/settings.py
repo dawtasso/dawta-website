@@ -52,5 +52,9 @@ class Settings(BaseSettings):
     # Default works for local development, override with DATA_DIR=/app/data for Docker
     data_dir: str = _get_default_data_dir()
 
+    # Supabase settings
+    supabase_url: str = ""
+    supabase_key: str = ""
+
 
 settings = Settings()

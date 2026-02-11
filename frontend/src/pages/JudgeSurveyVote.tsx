@@ -41,7 +41,7 @@ export default function JudgeSurveyVote() {
     }: {
       match: SurveyVoteMatch;
       thumbsUp: boolean;
-    }) => submitJudgment(match.questionId, match.voteId, thumbsUp),
+    }) => submitJudgment(match.matchId, thumbsUp),
     onSuccess: (result, variables) => {
       setJudgedCount((c) => c + 1);
       setLastResult({ thumbsUp: variables.thumbsUp, stats: result });

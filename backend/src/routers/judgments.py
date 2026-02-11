@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
-from src.models import JudgmentRequest, JudgmentStats, SurveyVoteMatch
-from src.services import JudgmentService
+from eu_pair_correlation.models import JudgmentRequest, JudgmentStats, SurveyVoteMatch
+from eu_pair_correlation.services.judgment_service import JudgmentService
 
 router = APIRouter(prefix="/judgments", tags=["judgments"])
 
@@ -25,8 +25,7 @@ async def get_random_match():
 async def submit_judgment(judgment: JudgmentRequest):
     """Submit a judgment (thumbs up/down) for a match."""
     return JudgmentService.submit_judgment(
-        question_id=judgment.question_id,
-        vote_id=judgment.vote_id,
+        match_id=judgment.match_id,
         thumbs_up=judgment.thumbs_up,
     )
 
@@ -37,8 +36,8 @@ async def get_stats():
     return JudgmentService.get_stats()
 
 
-@router.get("/export")
-async def export_judgments():
-    """Export all judgments as JSON (for backup)."""
-    return JudgmentService.export_judgments()
+@router.get("/all", response_model=list[JudgmentRequest])
+async def get_judgments():
+    """Get all judgments."""
+    return JudgmentService.get_judgments()
 

@@ -3,8 +3,8 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.routers import judgments, projects
-from src.settings import settings
+from eu_pair_correlation.routers import judgments, projects
+from eu_pair_correlation.settings import settings
 
 # Configure logging
 logging.basicConfig(

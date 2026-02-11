@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { CheckCircle, XCircle, Check, X } from 'lucide-react';
 import type { SurveyVoteMatch } from '../../api/client';
 
 type SwipeCardProps = {
@@ -87,7 +86,9 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
         }`}
       >
         <div className="bg-red-500 text-white rounded-full p-4 shadow-lg">
-          <XCircle className="w-8 h-8" />
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         </div>
       </div>
       <div 
@@ -96,7 +97,9 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
         }`}
       >
         <div className="bg-green-500 text-white rounded-full p-4 shadow-lg">
-          <CheckCircle className="w-8 h-8" />
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         </div>
       </div>
 
@@ -165,41 +168,49 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
               </div>
             </div>
 
-            {/* LLM score */}
-            <div className="flex items-center gap-2">
-              <div className="text-xs text-theme-tertiary w-28">Score LLM:</div>
-              <div className="flex-1 h-1.5 bg-theme-tertiary/30 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-purple-500 rounded-full"
-                  style={{ width: `${match.llmScore * 10}%` }}
-                />
+            {/* LLM score - only show if available */}
+            {match.llmScore != null && (
+              <div className="flex items-center gap-2">
+                <div className="text-xs text-theme-tertiary w-28">Score LLM:</div>
+                <div className="flex-1 h-1.5 bg-theme-tertiary/30 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-purple-500 rounded-full"
+                    style={{ width: `${match.llmScore * 10}%` }}
+                  />
+                </div>
+                <div className="text-xs text-theme-tertiary font-medium w-10 text-right">
+                  {match.llmScore}/10
+                </div>
               </div>
-              <div className="text-xs text-theme-tertiary font-medium w-10 text-right">
-                {match.llmScore}/10
-              </div>
-            </div>
+            )}
 
-            {/* LLM Go/No-Go */}
-            <div className="flex items-center gap-2">
-              <div className="text-xs text-theme-tertiary w-28">Avis LLM:</div>
-              <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                match.llmGo 
-                  ? 'bg-green-100 text-green-700' 
-                  : 'bg-red-100 text-red-700'
-              }`}>
-                {match.llmGo ? (
-                  <>
-                    <Check className="w-3 h-3" />
-                    Pertinent
-                  </>
-                ) : (
-                  <>
-                    <X className="w-3 h-3" />
-                    Non pertinent
-                  </>
-                )}
+            {/* LLM Go/No-Go - only show if available */}
+            {match.llmGo != null && (
+              <div className="flex items-center gap-2">
+                <div className="text-xs text-theme-tertiary w-28">Avis LLM:</div>
+                <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                  match.llmGo 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'bg-red-100 text-red-700'
+                }`}>
+                  {match.llmGo ? (
+                    <>
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Pertinent
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      Non pertinent
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -212,7 +223,9 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
           className="flex items-center justify-center w-16 h-16 rounded-full bg-red-100 hover:bg-red-200 text-red-600 transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Non pertinent"
         >
-          <X className="w-8 h-8" strokeWidth={2.5} />
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
         <button
           onClick={() => !isSubmitting && onJudge(true)}
@@ -220,7 +233,9 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
           className="flex items-center justify-center w-16 h-16 rounded-full bg-green-100 hover:bg-green-200 text-green-600 transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Pertinent"
         >
-          <Check className="w-8 h-8" strokeWidth={2.5} />
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
         </button>
       </div>
 

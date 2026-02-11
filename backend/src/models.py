@@ -21,15 +21,18 @@ class Project(BaseModel):
 
 
 class SurveyVoteMatch(BaseModel):
-    """Survey-vote match from the CSV data."""
+    """Survey-vote match from Supabase."""
 
+    match_id: str = Field(alias="matchId")
     question_id: str = Field(alias="questionId")
-    vote_id: int = Field(alias="voteId")
+    question_index: int = Field(alias="questionIndex")
     question_text: str = Field(alias="questionText")
+    file_name: str = Field(alias="fileName")
+    vote_id: int = Field(alias="voteId")
     vote_summary: str = Field(alias="voteSummary")
     similarity_score: float = Field(alias="similarityScore")
-    llm_score: int = Field(alias="llmScore")
-    llm_go: bool = Field(alias="llmGo")
+    llm_score: int | None = Field(None, alias="llmScore")
+    llm_go: bool | None = Field(None, alias="llmGo")
 
     model_config = {"populate_by_name": True}
 
@@ -46,8 +49,7 @@ class JudgmentStats(BaseModel):
 class JudgmentRequest(BaseModel):
     """Request body for submitting a judgment."""
 
-    question_id: str = Field(alias="questionId")
-    vote_id: int = Field(alias="voteId")
+    match_id: str = Field(alias="matchId")
     thumbs_up: bool = Field(alias="thumbsUp")
 
     model_config = {"populate_by_name": True}
