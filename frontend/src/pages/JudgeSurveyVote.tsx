@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Database } from 'lucide-react';
 import {
   fetchRandomMatch,
   submitJudgment,
@@ -87,91 +87,103 @@ export default function JudgeSurveyVote() {
         subtitle="Aidez-nous à évaluer si les questions de sondage sont liées aux votes du Parlement"
       />
 
-      {/* Stats bar */}
+      {/* Judgment stats - compact row above card */}
       {stats && (
-        <div className="mb-8 p-4 bg-theme-secondary rounded-xl">
-          <div className="flex flex-wrap justify-center gap-6 text-center">
-            <div>
-              <div className="text-2xl font-bold text-theme-primary">{stats.totalJudgments}</div>
-              <div className="text-xs text-theme-tertiary">Jugements totaux</div>
+        <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="p-2 bg-theme-secondary rounded-lg text-center">
+            <div className="text-lg font-bold text-theme-primary">{stats.totalJudgments}</div>
+            <div className="text-xs text-theme-tertiary">Jugements</div>
+          </div>
+          <div className="p-2 bg-green-50 rounded-lg text-center border border-green-100">
+            <div className="text-lg font-bold text-green-600">{stats.thumbsUp}</div>
+            <div className="text-xs text-green-600/70">Pertinents</div>
+          </div>
+          <div className="p-2 bg-red-50 rounded-lg text-center border border-red-100">
+            <div className="text-lg font-bold text-red-600">{stats.thumbsDown}</div>
+            <div className="text-xs text-red-600/70">Non pertinents</div>
+          </div>
+          <div className="p-2 bg-dawta-50 rounded-lg text-center border border-dawta-100">
+            <div className="text-lg font-bold text-dawta-600">{judgedCount}</div>
+            <div className="text-xs text-dawta-600/70">Vos jugements</div>
+          </div>
+        </div>
+      )}
+
+      {/* Card section */}
+      <div className="relative">
+        {/* Last result feedback - floating notification */}
+        {lastResult && (
+          <div
+            className={`absolute -top-2 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full text-sm font-medium shadow-lg transition-all animate-pulse ${
+              lastResult.thumbsUp
+                ? 'bg-green-500 text-white'
+                : 'bg-red-500 text-white'
+            }`}
+          >
+            {lastResult.thumbsUp ? (
+              <span className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" /> Merci !
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <XCircle className="w-4 h-4" /> Merci !
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Swipe card */}
+        {match && (
+          <SwipeCard
+            match={match}
+            onJudge={handleJudge}
+            isSubmitting={judgmentMutation.isPending}
+          />
+        )}
+      </div>
+
+      {/* Paires info - below the card */}
+      {stats && (
+        <div className="mt-8 p-4 bg-gradient-to-r from-dawta-50 to-dawta-100 rounded-xl border border-dawta-200">
+          <div className="flex items-center justify-center gap-3">
+            <Database className="w-5 h-5 text-dawta-600" />
+            <div className="text-center">
+              <span className="text-2xl font-bold text-dawta-700">{stats.totalMatches.toLocaleString()}</span>
+              <span className="text-dawta-600 ml-2">paires disponibles</span>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">{stats.thumbsUp}</div>
-              <div className="text-xs text-theme-tertiary">Pertinents</div>
+          </div>
+          {/* Progress bar */}
+          <div className="mt-3 max-w-md mx-auto">
+            <div className="flex justify-between text-xs text-dawta-600 mb-1">
+              <span>{stats.matchesJudged} paires jugées</span>
+              <span>{((stats.matchesJudged / stats.totalMatches) * 100).toFixed(1)}%</span>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-red-600">{stats.thumbsDown}</div>
-              <div className="text-xs text-theme-tertiary">Non pertinents</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-dawta-600">{judgedCount}</div>
-              <div className="text-xs text-theme-tertiary">Vos jugements</div>
+            <div className="h-2 bg-dawta-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-dawta-500 rounded-full transition-all duration-500"
+                style={{ width: `${(stats.matchesJudged / stats.totalMatches) * 100}%` }}
+              />
             </div>
           </div>
         </div>
       )}
 
-      {/* Last result feedback */}
-      {lastResult && (
-        <div
-          className={`mb-4 p-4 rounded-lg text-center text-sm font-medium transition-all flex items-center justify-center gap-2 ${
-            lastResult.thumbsUp
-              ? 'bg-green-50 text-green-700 border border-green-200'
-              : 'bg-red-50 text-red-700 border border-red-200'
-          }`}
-        >
-          {lastResult.thumbsUp ? (
-            <CheckCircle className="w-4 h-4" />
-          ) : (
-            <XCircle className="w-4 h-4" />
-          )}
-          <span>
-            Merci ! Cette correspondance a maintenant{' '}
-            <span className="inline-flex items-center gap-1">
-              {lastResult.stats.thumbsUp} <CheckCircle className="w-3 h-3 text-green-600" />
-            </span>{' '}
-            et{' '}
-            <span className="inline-flex items-center gap-1">
-              {lastResult.stats.thumbsDown} <XCircle className="w-3 h-3 text-red-600" />
+      {/* Info section - compact */}
+      <div className="mt-6 p-3 bg-theme-secondary/20 rounded-lg border border-theme-light/50">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-green-500" />
+            <span className="text-theme-secondary">
+              <span className="text-green-600 font-medium">Pertinent</span> = même sujet
             </span>
-          </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <XCircle className="w-4 h-4 text-red-500" />
+            <span className="text-theme-secondary">
+              <span className="text-red-600 font-medium">Non pertinent</span> = pas lié
+            </span>
+          </div>
         </div>
-      )}
-
-      {/* Swipe card */}
-      {match && (
-        <SwipeCard
-          match={match}
-          onJudge={handleJudge}
-          isSubmitting={judgmentMutation.isPending}
-        />
-      )}
-
-      {/* Info section */}
-      <div className="mt-12 p-6 bg-theme-secondary/30 rounded-xl border border-theme-light">
-        <h3 className="text-lg font-semibold text-theme-primary mb-4">
-          Comment juger ?
-        </h3>
-        <ul className="text-theme-secondary text-sm space-y-3">
-          <li className="flex items-start gap-3">
-            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-            <span>
-              <span className="text-green-600 font-medium">Pertinent</span> : La question de
-              sondage et le vote du Parlement traitent du même sujet
-            </span>
-          </li>
-          <li className="flex items-start gap-3">
-            <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <span>
-              <span className="text-red-600 font-medium">Non pertinent</span> : Les deux
-              éléments ne sont pas liés ou la correspondance est forcée
-            </span>
-          </li>
-        </ul>
-        <p className="text-theme-tertiary text-xs mt-4 pt-4 border-t border-theme-light">
-          Vos jugements nous aident à améliorer notre algorithme de correspondance entre
-          l'opinion publique et les actions du Parlement Européen.
-        </p>
       </div>
     </PageLayout>
   );
