@@ -1,9 +1,10 @@
+import random
 from typing import Any
 
 from loguru import logger
 
-from eu_pair_correlation.models import JudgmentStats, SurveyVoteMatch, JudgmentRequest
-from eu_pair_correlation.supabase_client import get_supabase
+from src.models import JudgmentStats, SurveyVoteMatch, JudgmentRequest
+from src.supabase_client import get_supabase
 
 
 class JudgmentService:
@@ -16,19 +17,28 @@ class JudgmentService:
             response = get_supabase().table("survey_vote_matches").select("*").execute()
             return [cls._row_to_match(row) for row in response.data]
         except Exception as e:
-            logger.error(f"Error fetching matches: {e}", exc_info=True)
+            logger.exception("Error fetching matches")
             return []
 
     @classmethod
     def get_random_match(cls) -> SurveyVoteMatch | None:
         """Get a random match from Supabase."""
         try:
-            response = get_supabase().rpc("get_random_match").execute()
+            supabase = get_supabase()
+            # Get total count
+            # show the full table
+            count_response = supabase.table("survey_vote_matches").select("*", count="exact").limit(0).execute()
+            total = count_response.count or 0
+            if total == 0:
+                return None
+            # Get random offset and fetch one match
+            offset = random.randint(0, total - 1)
+            response = supabase.table("survey_vote_matches").select("*").range(offset, offset).execute()
             if response.data:
                 return cls._row_to_match(response.data[0])
             return None
         except Exception as e:
-            logger.error(f"Error fetching random match: {e}", exc_info=True)
+            logger.exception("Error fetching random match")
             return None
 
     @classmethod
@@ -44,7 +54,7 @@ class JudgmentService:
 
             return cls._get_match_stats(match_id)
         except Exception as e:
-            logger.error(f"Error submitting judgment: {e}", exc_info=True)
+            logger.exception("Error submitting judgment")
             return JudgmentStats(thumbs_up=0, thumbs_down=0)
 
     @classmethod
@@ -81,7 +91,7 @@ class JudgmentService:
                 "agreementRate": total_thumbs_up / total_judgments if total_judgments > 0 else 0,
             }
         except Exception as e:
-            logger.error(f"Error fetching stats: {e}", exc_info=True)
+            logger.exception("Error fetching stats")
             return {
                 "totalMatches": 0,
                 "matchesJudged": 0,
@@ -107,7 +117,7 @@ class JudgmentService:
             thumbs_down = len(judgments) - thumbs_up
             return JudgmentStats(thumbs_up=thumbs_up, thumbs_down=thumbs_down)
         except Exception as e:
-            logger.error(f"Error fetching match stats: {e}", exc_info=True)
+            logger.exception("Error fetching match stats")
             return JudgmentStats(thumbs_up=0, thumbs_down=0)
 
     @staticmethod
@@ -136,5 +146,5 @@ class JudgmentService:
                 thumbs_up=bool(row["thumbs_up"]),
             ) for row in response.data]
         except Exception as e:
-            logger.error(f"Error fetching judgments: {e}", exc_info=True)
+            logger.exception("Error fetching judgments")
             return []

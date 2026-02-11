@@ -6,10 +6,8 @@ from typing import Any, Dict, List
 
 from loguru import logger
 
-from eu_pair_correlation.models import Project
-from eu_pair_correlation.settings import settings
-
-DATA_DIR = Path(settings.data_dir)
+from src.models import Project
+from src.settings import settings, DATA_DIR
 
 
 class ProjectService:

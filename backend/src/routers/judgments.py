@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
-from eu_pair_correlation.models import JudgmentRequest, JudgmentStats, SurveyVoteMatch
-from eu_pair_correlation.services.judgment_service import JudgmentService
+from src.models import JudgmentRequest, JudgmentStats, SurveyVoteMatch
+from src.services.judgment_service import JudgmentService
 
 router = APIRouter(prefix="/judgments", tags=["judgments"])
 

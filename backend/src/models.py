@@ -24,13 +24,13 @@ class SurveyVoteMatch(BaseModel):
     """Survey-vote match from Supabase."""
 
     match_id: str = Field(alias="matchId")
-    question_id: str = Field(alias="questionId")
-    question_index: int = Field(alias="questionIndex")
-    question_text: str = Field(alias="questionText")
-    file_name: str = Field(alias="fileName")
-    vote_id: int = Field(alias="voteId")
-    vote_summary: str = Field(alias="voteSummary")
-    similarity_score: float = Field(alias="similarityScore")
+    question_id: str | None = Field(None, alias="questionId")
+    question_index: str | None = Field(None, alias="questionIndex")
+    question_text: str | None = Field(None, alias="questionText")
+    file_name: str | None = Field(None, alias="fileName")
+    vote_id: int | None = Field(None, alias="voteId")
+    vote_summary: str | None = Field(None, alias="voteSummary")
+    similarity_score: float | None = Field(None, alias="similarityScore")
     llm_score: int | None = Field(None, alias="llmScore")
     llm_go: bool | None = Field(None, alias="llmGo")
 

@@ -160,11 +160,11 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
               <div className="flex-1 h-1.5 bg-theme-tertiary/30 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-dawta-500 rounded-full"
-                  style={{ width: `${match.similarityScore * 100}%` }}
+                  style={{ width: `${(match.similarityScore ?? 0) * 100}%` }}
                 />
               </div>
               <div className="text-xs text-theme-tertiary font-medium w-10 text-right">
-                {(match.similarityScore * 100).toFixed(0)}%
+                {(match.similarityScore ?? 0 * 100).toFixed(0)}%
               </div>
             </div>
 

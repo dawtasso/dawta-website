@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse, Response
 
 from src.models import Project
-from src.services import DATA_DIR, ProjectService
-from src.settings import settings
+from src.services.project_services import ProjectService
+from src.settings import settings, DATA_DIR
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 

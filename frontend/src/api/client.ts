@@ -17,13 +17,13 @@ export interface Project {
 
 export interface SurveyVoteMatch {
   matchId: string;
-  questionId: string;
-  questionIndex: number;
-  questionText: string;
-  fileName: string;
-  voteId: number;
-  voteSummary: string;
-  similarityScore: number;
+  questionId?: string;
+  questionIndex?: string;
+  questionText?: string;
+  fileName?: string;
+  voteId?: number;
+  voteSummary?: string;
+  similarityScore?: number;
   llmScore?: number;
   llmGo?: boolean;
 }

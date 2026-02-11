@@ -1,6 +1,6 @@
 from supabase import Client, create_client
 
-from eu_pair_correlation.settings import settings
+from src.settings import settings
 
 _client: Client | None = None
 
