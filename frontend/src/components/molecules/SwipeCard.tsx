@@ -155,24 +155,18 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
           {/* Scores section */}
           <div className="space-y-3 pt-2">
             {/* Similarity score */}
-            {(() => {
-              const score = Number(match.similarityScore) || 0;
-              const percent = Math.round(score * 100);
-              return (
-                <div className="flex items-center gap-2">
-                  <div className="text-xs text-theme-tertiary w-28 flex-shrink-0">Similarité:</div>
-                  <div className="flex-1 h-2 bg-theme-tertiary/30 rounded-full overflow-hidden min-w-[100px]">
-                    <div 
-                      className="h-full bg-dawta-500 rounded-full transition-all duration-300"
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-                  <div className="text-xs text-theme-tertiary font-medium w-12 text-right flex-shrink-0">
-                    {percent}%
-                  </div>
-                </div>
-              );
-            })()}
+            <div className="flex items-center gap-2">
+              <div className="text-xs text-theme-tertiary w-28">Similarité:</div>
+              <div className="flex-1 h-1.5 bg-theme-tertiary/30 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-dawta-500 rounded-full"
+                  style={{ width: `${(match.similarityScore ?? 0) * 100}%` }}
+                />
+              </div>
+              <div className="text-xs text-theme-tertiary font-medium w-10 text-right">
+                {((match.similarityScore ?? 0) * 100).toFixed(0)}%
+              </div>
+            </div>
 
             {/* LLM score - only show if available */}
             {match.llmScore != null && (
