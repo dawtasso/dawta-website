@@ -1,0 +1,8 @@
+[
+  {
+    "id": "example-media",
+    "name": "Nom du média",
+    "logo": "data/logos/lequipe.png",
+    "url": "https://example.com/article"
+  }
+]

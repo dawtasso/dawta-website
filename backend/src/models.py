@@ -20,6 +20,15 @@ class Project(BaseModel):
     model_config = {"populate_by_name": True}
 
 
+class Citation(BaseModel):
+    """External citation/press mention."""
+
+    id: str
+    name: str
+    logo: str
+    url: str
+
+
 class SurveyVoteMatch(BaseModel):
     """Survey-vote match from Supabase."""
 

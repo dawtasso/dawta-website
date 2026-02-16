@@ -47,6 +47,34 @@ export interface JudgmentEntry {
   thumbsUp: boolean;
 }
 
+export interface Citation {
+  id: string;
+  name: string;
+  logo: string;
+  url: string;
+}
+
+export function getCitationLogoUrl(logo: string): string {
+  if (logo.startsWith('http')) return logo;
+  const filename = logo.split('/').pop();
+  return `${API_BASE_URL}/api/citations/logos/${filename}`;
+}
+
+export async function fetchCitations(): Promise<Citation[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/citations`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch citations: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  } catch (error) {
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error(`Unable to connect to backend at ${API_BASE_URL}. Make sure the backend server is running.`);
+    }
+    throw error;
+  }
+}
+
 export async function fetchProjects(): Promise<Project[]> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/projects`);
