@@ -15,7 +15,7 @@ export default function CitationsList() {
   return (
     <section className="w-full max-w-4xl mx-auto px-4 py-12">
       <Heading level={3} className="text-center text-theme-primary mb-4">
-        Ils nous ont cité
+        Ils nous ont cités
       </Heading>
       <div className="flex flex-wrap items-center justify-center gap-8">
         {citations.map((citation) => (

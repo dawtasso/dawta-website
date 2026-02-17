@@ -8,7 +8,7 @@ L'ambition de ce rapport est de comptabiliser les émissions de CO2 émises par 
 
 ## Les limites
 
-1. Les émissions calculées doivent être considéré comme conservatrices, notamment pour l'avion, pour plusieurs raisons :
+1. Les émissions calculées doivent être considérées comme conservatrices, notamment pour l'avion, pour plusieurs raisons :
 
    - Nous ne prenons pas en considération d'éventuels trajets supplémentaires par l'équipe visiteuse ;
    - Nous ne prenons pas en considération les émissions de CO2 pour amener l'avion à l'aéroport de départ ;
