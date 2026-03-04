@@ -9,6 +9,17 @@
     "publishedAt": "2026-02-01",
     "hasSlide": true,
     "hasReport": true
+  },
+  {
+    "id": "ue-pair-correlation",
+    "title": "Corrélation sondages-votes UE",
+    "githubUrl": "https://github.com/dawtasso/eu_survey_correlation",
+    "description": "Ce projet étudie la corrélation entre les sondages européens (Eurobaromètre, ESS) et les votes du Parlement européen.",
+    "longDescription": null,
+    "status": "published",
+    "publishedAt": "2026-02-22",
+    "hasJudgeFeature": true,
+    "hidden": true
   }
 ]
 

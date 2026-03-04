@@ -1,43 +1,39 @@
 from fastapi import APIRouter, HTTPException
 
-from src.models import JudgmentRequest, JudgmentStats, SurveyVoteMatch
+from src.models import AdminJudgmentRequest, SurveyVoteMatch, ValidationStats
 from src.services.judgment_service import JudgmentService
 
 router = APIRouter(prefix="/judgments", tags=["judgments"])
 
 
-@router.get("/matches", response_model=list[SurveyVoteMatch])
-async def get_matches():
-    """Get all survey-vote matches."""
-    return JudgmentService.get_all_matches()
-
-
 @router.get("/matches/random", response_model=SurveyVoteMatch)
-async def get_random_match():
-    """Get a random survey-vote match."""
-    match = JudgmentService.get_random_match()
+async def get_random_match(source: str | None = None):
+    """Get a random unvalidated survey-vote match. Optional source filter: ESS, Eurobarometer."""
+    match = JudgmentService.get_random_match(source=source)
     if not match:
-        raise HTTPException(status_code=404, detail="No matches available")
+        raise HTTPException(status_code=404, detail="No unvalidated matches available")
     return match
 
 
-@router.post("", response_model=JudgmentStats)
-async def submit_judgment(judgment: JudgmentRequest):
-    """Submit a judgment (thumbs up/down) for a match."""
-    return JudgmentService.submit_judgment(
-        match_id=judgment.match_id,
-        thumbs_up=judgment.thumbs_up,
+@router.post("/validate")
+async def validate_match(request: AdminJudgmentRequest):
+    """Accept or refuse a match (admin validation)."""
+    success = JudgmentService.validate_match(
+        match_id=request.match_id,
+        validated=request.validated,
     )
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to validate match")
+    return {"ok": True}
 
 
-@router.get("/stats")
+@router.get("/stats", response_model=ValidationStats)
 async def get_stats():
-    """Get aggregated judgment statistics."""
-    return JudgmentService.get_stats()
+    """Get validation statistics (accepted, refused, pending, total)."""
+    return JudgmentService.get_validation_stats()
 
 
-@router.get("/all", response_model=list[JudgmentRequest])
-async def get_judgments():
-    """Get all judgments."""
-    return JudgmentService.get_judgments()
-
+@router.get("/validated", response_model=list[SurveyVoteMatch])
+async def get_validated_matches(status: str | None = None):
+    """Get validated matches. Query param status: 'accepted', 'refused', or omit for all."""
+    return JudgmentService.get_validated_matches(status)

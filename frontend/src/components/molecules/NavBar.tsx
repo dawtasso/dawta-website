@@ -1,6 +1,8 @@
+import { useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo, NavLink } from '../atoms';
 import { Button } from '../atoms';
+import { useSecretMode } from '../../contexts/SecretModeContext';
 
 type NavItem = {
   to: string;
@@ -19,11 +21,33 @@ const defaultNavItems: NavItem[] = [
 ];
 
 export default function NavBar({ activePath, items = defaultNavItems }: NavBarProps) {
+  const { showHidden, setShowHidden } = useSecretMode();
+  const clickCountRef = useRef(0);
+  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleLogoClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    clickCountRef.current += 1;
+
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
+    }
+
+    if (clickCountRef.current >= 5) {
+      clickCountRef.current = 0;
+      setShowHidden(!showHidden);
+    } else {
+      clickTimerRef.current = setTimeout(() => {
+        clickCountRef.current = 0;
+      }, 1500);
+    }
+  }, [showHidden, setShowHidden]);
+
   return (
     <nav className="border-b border-theme-light bg-theme-primary">
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         <div className="flex items-center space-x-8">
-          <Link to="/" className="flex items-center py-4">
+          <Link to="/" className="flex items-center py-4" onClick={handleLogoClick}>
             <Logo size="md" />
           </Link>
           {items.map((item) => (

@@ -1,4 +1,5 @@
 import type { Project } from '../../api/client';
+import { useSecretMode } from '../../contexts/SecretModeContext';
 import { ProjectCard } from '../molecules';
 
 type ProjectsListProps = {
@@ -6,7 +7,13 @@ type ProjectsListProps = {
 };
 
 export default function ProjectsList({ projects }: ProjectsListProps) {
-  if (projects.length === 0) {
+  const { showHidden } = useSecretMode();
+
+  const visibleProjects = showHidden
+    ? projects
+    : projects.filter((p) => !p.hidden);
+
+  if (visibleProjects.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">Aucun projet trouvé.</p>
@@ -16,7 +23,7 @@ export default function ProjectsList({ projects }: ProjectsListProps) {
 
   return (
     <div className="space-y-6">
-      {projects.map((project) => (
+      {visibleProjects.map((project) => (
         <ProjectCard key={project.id} project={project} />
       ))}
       <div className="pt-6 text-center">

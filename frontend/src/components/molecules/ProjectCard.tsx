@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { type Project } from '../../api/client';
 import { useGitHubStars } from '../../hooks/useGitHubStars';
 import { Heading, Text, Button } from '../atoms';
@@ -11,9 +12,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
   return (
     <article className="border-b border-theme-light pb-6 last:border-b-0">
-      <Heading level={2} className="mb-2">
-        {project.title}
-      </Heading>
+      <Link to={`/projects/${project.id}`} className="hover:text-dawta transition-colors">
+        <Heading level={2} className="mb-2">
+          {project.title}
+        </Heading>
+      </Link>
       <Text variant="muted" className="mb-3">
         {project.description}
       </Text>

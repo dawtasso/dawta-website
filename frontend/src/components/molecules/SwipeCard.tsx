@@ -3,11 +3,12 @@ import type { SurveyVoteMatch } from '../../api/client';
 
 type SwipeCardProps = {
   match: SurveyVoteMatch;
-  onJudge: (thumbsUp: boolean) => void;
+  onJudge: (accepted: boolean) => void;
+  onPass?: () => void;
   isSubmitting?: boolean;
 };
 
-export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardProps) {
+export default function SwipeCard({ match, onJudge, onPass, isSubmitting }: SwipeCardProps) {
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const startXRef = useRef(0);
@@ -29,12 +30,12 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
   const handleTouchEnd = () => {
     if (!isDragging || isSubmitting) return;
     setIsDragging(false);
-    
+
     const threshold = 100;
     if (swipeOffset > threshold) {
-      onJudge(true); // Thumbs up
+      onJudge(true);
     } else if (swipeOffset < -threshold) {
-      onJudge(false); // Thumbs down
+      onJudge(false);
     }
     setSwipeOffset(0);
   };
@@ -54,7 +55,7 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
   const handleMouseUp = () => {
     if (!isDragging || isSubmitting) return;
     setIsDragging(false);
-    
+
     const threshold = 100;
     if (swipeOffset > threshold) {
       onJudge(true);
@@ -71,16 +72,17 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
     }
   };
 
-  // Calculate visual feedback based on swipe
   const rotation = swipeOffset * 0.05;
   const opacity = Math.min(Math.abs(swipeOffset) / 100, 1);
   const isSwipingRight = swipeOffset > 30;
   const isSwipingLeft = swipeOffset < -30;
 
+  const similarityPercent = Math.round((Number(match.similarityScore) || 0) * 100);
+
   return (
     <div className="relative w-full max-w-lg mx-auto">
       {/* Swipe indicators */}
-      <div 
+      <div
         className={`absolute left-4 top-1/2 -translate-y-1/2 z-10 transition-opacity duration-200 ${
           isSwipingLeft ? 'opacity-100' : 'opacity-0'
         }`}
@@ -91,7 +93,7 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
           </svg>
         </div>
       </div>
-      <div 
+      <div
         className={`absolute right-4 top-1/2 -translate-y-1/2 z-10 transition-opacity duration-200 ${
           isSwipingRight ? 'opacity-100' : 'opacity-0'
         }`}
@@ -122,22 +124,38 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
         onMouseLeave={handleMouseLeave}
       >
         {/* Overlay for swipe feedback */}
-        <div 
+        <div
           className={`absolute inset-0 pointer-events-none transition-opacity duration-200 ${
             isSwipingRight ? 'bg-green-500/10' : isSwipingLeft ? 'bg-red-500/10' : ''
           }`}
           style={{ opacity }}
         />
 
-        <div className="p-6 space-y-6">
-          {/* Question */}
+        <div className="p-6 space-y-5">
+          {/* Survey question */}
           <div>
-            <div className="text-xs font-semibold text-dawta-600 uppercase tracking-wide mb-2">
-              Question de sondage
+            <div className="flex items-center gap-2 mb-2">
+              <div className="text-xs font-semibold text-dawta-600 uppercase tracking-wide">
+                Question de sondage
+              </div>
+              {match.source && (
+                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide ${
+                  match.source === 'ESS'
+                    ? 'bg-purple-100 text-purple-700'
+                    : 'bg-blue-100 text-blue-700'
+                }`}>
+                  {match.source}
+                </span>
+              )}
             </div>
             <p className="text-theme-primary text-base leading-relaxed">
-              {match.questionText}
+              {match.questionClean}
             </p>
+            {match.surveyDate && (
+              <div className="mt-1 text-xs text-theme-tertiary">
+                Sondage : {match.surveyFile?.replace('.xlsx', '')} — {match.surveyDate}
+              </div>
+            )}
           </div>
 
           <div className="border-t border-theme-light" />
@@ -148,86 +166,79 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
               Vote du Parlement Européen
             </div>
             <p className="text-theme-secondary text-sm leading-relaxed">
-              {match.voteSummary}
+              {match.voteSummaryClean}
             </p>
+            {match.voteDate && (
+              <div className="mt-1 text-xs text-theme-tertiary">
+                Vote : {match.voteDate}
+                {match.daysBetween != null && (
+                  <span className="ml-2">({match.daysBetween} jours d'écart)</span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Scores section */}
           <div className="space-y-3 pt-2">
             {/* Similarity score */}
-            {(() => {
-              const score = Number(match.similarityScore) || 0;
-              const percent = Math.round(score * 100);
-              return (
-                <div className="flex items-center gap-2">
-                  <div className="text-xs text-theme-tertiary w-28 flex-shrink-0">Similarité:</div>
-                  <div className="flex-1 h-2 bg-theme-tertiary/30 rounded-full overflow-hidden min-w-[100px]">
-                    <div 
-                      className="h-full bg-dawta-500 rounded-full transition-all duration-300"
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-                  <div className="text-xs text-theme-tertiary font-medium w-12 text-right flex-shrink-0">
-                    {percent}%
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* LLM score - only show if available */}
-            {match.llmScore != null && (
-              <div className="flex items-center gap-2">
-                <div className="text-xs text-theme-tertiary w-28">Score LLM:</div>
-                <div className="flex-1 h-1.5 bg-theme-tertiary/30 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-purple-500 rounded-full"
-                    style={{ width: `${match.llmScore * 10}%` }}
-                  />
-                </div>
-                <div className="text-xs text-theme-tertiary font-medium w-10 text-right">
-                  {match.llmScore}/10
-                </div>
+            <div className="flex items-center gap-2">
+              <div className="text-xs text-theme-tertiary w-28 flex-shrink-0">Similarité :</div>
+              <div className="flex-1 h-2 bg-theme-tertiary/30 rounded-full overflow-hidden min-w-[100px]">
+                <div
+                  className="h-full bg-dawta-500 rounded-full transition-all duration-300"
+                  style={{ width: `${similarityPercent}%` }}
+                />
               </div>
-            )}
+              <div className="text-xs text-theme-tertiary font-medium w-12 text-right flex-shrink-0">
+                {similarityPercent}%
+              </div>
+            </div>
 
-            {/* LLM Go/No-Go - only show if available */}
-            {match.llmGo != null && (
-              <div className="flex items-center gap-2">
-                <div className="text-xs text-theme-tertiary w-28">Avis LLM:</div>
-                <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                  match.llmGo 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'bg-red-100 text-red-700'
-                }`}>
-                  {match.llmGo ? (
-                    <>
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Pertinent
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                      Non pertinent
-                    </>
-                  )}
+            {/* LLM related badge + explanation */}
+            {match.llmRelated != null && (
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="text-xs text-theme-tertiary w-28">Avis LLM :</div>
+                  <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                    match.llmRelated
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-red-100 text-red-700'
+                  }`}>
+                    {match.llmRelated ? (
+                      <>
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Lié
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Non lié
+                      </>
+                    )}
+                  </div>
                 </div>
+                {match.llmExplanation && (
+                  <p className="text-xs text-theme-tertiary italic pl-[7.5rem]">
+                    {match.llmExplanation}
+                  </p>
+                )}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Button controls for accessibility and desktop */}
+      {/* Button controls */}
       <div className="flex justify-center gap-8 mt-6">
         <button
           onClick={() => !isSubmitting && onJudge(false)}
           disabled={isSubmitting}
           className="flex items-center justify-center w-16 h-16 rounded-full bg-red-100 hover:bg-red-200 text-red-600 transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-label="Non pertinent"
+          aria-label="Refuser"
         >
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -237,7 +248,7 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
           onClick={() => !isSubmitting && onJudge(true)}
           disabled={isSubmitting}
           className="flex items-center justify-center w-16 h-16 rounded-full bg-green-100 hover:bg-green-200 text-green-600 transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-label="Pertinent"
+          aria-label="Accepter"
         >
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -247,9 +258,8 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
 
       {/* Instructions */}
       <p className="text-center text-theme-tertiary text-sm mt-4">
-        Glissez ou cliquez pour juger si cette correspondance est pertinente
+        Glissez ou cliquez pour accepter / refuser cette paire
       </p>
     </div>
   );
 }
-
