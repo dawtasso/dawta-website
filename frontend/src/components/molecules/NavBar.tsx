@@ -39,7 +39,7 @@ export default function NavBar({ activePath, items = defaultNavItems }: NavBarPr
     } else {
       clickTimerRef.current = setTimeout(() => {
         clickCountRef.current = 0;
-      }, 1500);
+      }, 3000);
     }
   }, [showHidden, setShowHidden]);
 

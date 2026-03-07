@@ -17,10 +17,7 @@ from loguru import logger
 
 from src.supabase_client import get_supabase
 
-GITHUB_CSV_URL = (
-    "https://raw.githubusercontent.com/dawtasso/eu_survey_correlation"
-    "/main/data/matches/survey_vote_matches_validated.csv"
-)
+GITHUB_CSV_URL = "https://raw.githubusercontent.com/dawtasso/eu_survey_correlation/main/data/matches/simplified_michlou_survey_vote_matches_clean.csv"
 
 BATCH_SIZE = 200
 
@@ -78,30 +75,37 @@ def import_csv(source: str) -> None:
             vote_id_raw = parse_int(row["vote_id"])
             match_id = f"{question_id}_{vote_id_raw or 0}_{i}"
 
-            rows.append({
-                "match_id": match_id,
-                "question_id": question_id,
-                "question_clean": row.get("question_clean", "").strip(),
-                "question_original": row.get("question_original", "").strip(),
-                "survey_file": row.get("survey_file", "").strip(),
-                "survey_date": row.get("survey_date", "").strip() or None,
-                "vote_id": vote_id_raw,
-                "vote_summary_original": row.get("vote_summary_original", "").strip(),
-                "vote_summary_clean": row.get("vote_summary_clean", "").strip(),
-                "vote_date": row.get("vote_date", "").strip() or None,
-                "days_between": parse_int(row.get("days_between", "")),
-                "similarity_score": parse_float(row.get("similarity_score", "")),
-                "llm_related": parse_bool(row.get("llm_related", "")),
-                "llm_explanation": row.get("llm_explanation", "").strip() or None,
-                "source": row.get("source", "Eurobarometer").strip() or "Eurobarometer",
-                "admin_validated": None,
-            })
+            rows.append(
+                {
+                    "match_id": match_id,
+                    "question_id": question_id,
+                    "question_clean": row.get("question_clean", "").strip(),
+                    "question_original": row.get("question_original", "").strip(),
+                    "survey_file": row.get("survey_file", "").strip(),
+                    "survey_date": row.get("survey_date", "").strip() or None,
+                    "vote_id": vote_id_raw,
+                    "vote_summary_original": row.get(
+                        "vote_summary_original", ""
+                    ).strip(),
+                    "vote_summary_clean": row.get("vote_summary_clean", "").strip(),
+                    "vote_date": row.get("vote_date", "").strip() or None,
+                    "days_between": parse_int(row.get("days_between", "")),
+                    "similarity_score": parse_float(row.get("similarity_score", "")),
+                    "llm_related": parse_bool(row.get("llm_related", "")),
+                    "llm_explanation": row.get("llm_explanation", "").strip() or None,
+                    "source": row.get("source", "Eurobarometer").strip()
+                    or "Eurobarometer",
+                    "admin_validated": None,
+                }
+            )
 
     logger.info(f"Parsed {len(rows)} rows, inserting in batches of {BATCH_SIZE}...")
 
     for start in range(0, len(rows), BATCH_SIZE):
         batch = rows[start : start + BATCH_SIZE]
-        supabase.table("survey_vote_matches").upsert(batch, on_conflict="match_id").execute()
+        supabase.table("survey_vote_matches").upsert(
+            batch, on_conflict="match_id"
+        ).execute()
         logger.info(f"  Inserted rows {start}–{start + len(batch) - 1}")
 
     logger.info(f"Done. {len(rows)} matches imported.")

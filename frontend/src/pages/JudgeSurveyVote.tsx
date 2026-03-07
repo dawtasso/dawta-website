@@ -1,6 +1,6 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle, XCircle, Database, Lock, Unlock, Filter, X } from 'lucide-react';
+import { CheckCircle, XCircle, Database, Filter, X } from 'lucide-react';
 import {
   fetchRandomMatch,
   fetchValidationStats,
@@ -16,42 +16,11 @@ import {
   SwipeCard,
 } from '../components';
 
-const ADMIN_KEY = 'dawta_admin';
-const CLICK_THRESHOLD = 5;
-const CLICK_WINDOW_MS = 2000;
-
 const SOURCE_OPTIONS = [
   { value: '', label: 'Tous' },
   { value: 'Eurobarometer', label: 'Eurobaromètre' },
   { value: 'ESS', label: 'ESS' },
 ] as const;
-
-function useAdminMode() {
-  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem(ADMIN_KEY) === 'true');
-  const clickTimestamps = useRef<number[]>([]);
-
-  const handleTitleClick = useCallback(() => {
-    const now = Date.now();
-    clickTimestamps.current.push(now);
-    clickTimestamps.current = clickTimestamps.current.filter(
-      (t) => now - t < CLICK_WINDOW_MS,
-    );
-    if (clickTimestamps.current.length >= CLICK_THRESHOLD) {
-      clickTimestamps.current = [];
-      setIsAdmin((prev) => {
-        const next = !prev;
-        if (next) {
-          localStorage.setItem(ADMIN_KEY, 'true');
-        } else {
-          localStorage.removeItem(ADMIN_KEY);
-        }
-        return next;
-      });
-    }
-  }, []);
-
-  return { isAdmin, handleTitleClick };
-}
 
 function SourceFilter({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
@@ -317,20 +286,19 @@ function ValidatedTable({ matches, filter, onFilterChange, onSelect }: {
 }
 
 export default function JudgeSurveyVote() {
-  const { isAdmin, handleTitleClick } = useAdminMode();
   const [lastAction, setLastAction] = useState<'accepted' | 'refused' | null>(null);
   const [dashboardFilter, setDashboardFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
   const [selectedMatch, setSelectedMatch] = useState<SurveyVoteMatch | null>(null);
   const queryClient = useQueryClient();
 
-  // Stats — always fetched
+  // Stats
   const { data: stats, refetch: refetchStats } = useQuery({
     queryKey: ['validationStats'],
     queryFn: fetchValidationStats,
   });
 
-  // Random unvalidated match — only in admin mode, respects source filter
+  // Random unvalidated match, respects source filter
   const {
     data: match,
     isLoading: isLoadingMatch,
@@ -339,7 +307,6 @@ export default function JudgeSurveyVote() {
   } = useQuery({
     queryKey: ['randomMatch', sourceFilter],
     queryFn: () => fetchRandomMatch(sourceFilter || undefined),
-    enabled: isAdmin,
     retry: false,
   });
 
@@ -372,104 +339,58 @@ export default function JudgeSurveyVote() {
 
   return (
     <PageLayout maxWidth="2xl">
-      {/* Header with easter egg */}
-      <div className="relative">
-        <div onClick={handleTitleClick} className="cursor-default select-none">
-          <PageHeader
-            title="Validation des paires sondage-vote"
-            subtitle={
-              isAdmin
-                ? "Mode admin — Acceptez ou refusez les correspondances"
-                : "Tableau de bord de la validation des correspondances sondage-vote"
-            }
-          />
-        </div>
-        {/* Discrete admin indicator */}
-        <div className="absolute top-0 right-0 p-2">
-          {isAdmin ? (
-            <Unlock className="w-4 h-4 text-dawta-500" />
-          ) : (
-            <Lock className="w-4 h-4 text-theme-tertiary/30" />
-          )}
-        </div>
-      </div>
+      <PageHeader
+        title="Validation des paires sondage-vote"
+        subtitle="Acceptez ou refusez les correspondances"
+      />
 
-      {/* Source filter — always visible */}
-      {isAdmin && (
-        <SourceFilter value={sourceFilter} onChange={setSourceFilter} />
-      )}
+      <SourceFilter value={sourceFilter} onChange={setSourceFilter} />
 
-      {/* Stats bar — always visible */}
       {stats && <StatsBar stats={stats} />}
 
-      {/* Admin validation UI */}
-      {isAdmin && (
-        <>
-          {isLoadingMatch && !match && (
-            <LoadingState message="Chargement d'une paire..." />
-          )}
-
-          {matchError && (
-            <div className="p-4 bg-dawta-50 rounded-xl border border-dawta-200 text-center">
-              <Database className="w-8 h-8 text-dawta-400 mx-auto mb-2" />
-              <p className="text-dawta-700 font-medium">Toutes les paires ont été validées !</p>
-              <p className="text-dawta-600 text-sm mt-1">
-                {sourceFilter
-                  ? `Plus de paires ${sourceFilter} en attente.`
-                  : "Il n'y a plus de paires en attente."}
-              </p>
-            </div>
-          )}
-
-          {/* Swipe card with feedback */}
-          {match && !matchError && (
-            <div className="relative">
-              {lastAction && (
-                <div
-                  className={`absolute -top-2 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full text-sm font-medium shadow-lg transition-all animate-pulse ${
-                    lastAction === 'accepted'
-                      ? 'bg-green-500 text-white'
-                      : 'bg-red-500 text-white'
-                  }`}
-                >
-                  {lastAction === 'accepted' ? (
-                    <span className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4" /> Acceptée
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <XCircle className="w-4 h-4" /> Refusée
-                    </span>
-                  )}
-                </div>
-              )}
-
-              <SwipeCard
-                match={match}
-                onJudge={handleJudge}
-                isSubmitting={validateMutation.isPending}
-              />
-            </div>
-          )}
-        </>
+      {isLoadingMatch && !match && (
+        <LoadingState message="Chargement d'une paire..." />
       )}
 
-      {/* Public / shared: project info when not admin */}
-      {!isAdmin && (
-        <div className="p-4 bg-gradient-to-r from-dawta-50 to-dawta-100 rounded-xl border border-dawta-200">
-          <div className="flex items-center justify-center gap-3">
-            <Database className="w-5 h-5 text-dawta-600" />
-            <div className="text-center">
-              <span className="text-2xl font-bold text-dawta-700">
-                {stats?.total.toLocaleString() ?? '…'}
-              </span>
-              <span className="text-dawta-600 ml-2">paires à valider</span>
-            </div>
-          </div>
-          <p className="text-center text-sm text-dawta-600 mt-3">
-            Ce projet étudie la corrélation entre les sondages européens et les votes du Parlement.
-            Les paires sondage-vote sont validées manuellement pour constituer un jeu de données fiable.
+      {matchError && (
+        <div className="p-4 bg-dawta-50 rounded-xl border border-dawta-200 text-center">
+          <Database className="w-8 h-8 text-dawta-400 mx-auto mb-2" />
+          <p className="text-dawta-700 font-medium">Toutes les paires ont été validées !</p>
+          <p className="text-dawta-600 text-sm mt-1">
+            {sourceFilter
+              ? `Plus de paires ${sourceFilter} en attente.`
+              : "Il n'y a plus de paires en attente."}
           </p>
+        </div>
+      )}
+
+      {match && !matchError && (
+        <div className="relative">
+          {lastAction && (
+            <div
+              className={`absolute -top-2 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full text-sm font-medium shadow-lg transition-all animate-pulse ${
+                lastAction === 'accepted'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-red-500 text-white'
+              }`}
+            >
+              {lastAction === 'accepted' ? (
+                <span className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" /> Acceptée
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <XCircle className="w-4 h-4" /> Refusée
+                </span>
+              )}
+            </div>
+          )}
+
+          <SwipeCard
+            match={match}
+            onJudge={handleJudge}
+            isSubmitting={validateMutation.isPending}
+          />
         </div>
       )}
 
