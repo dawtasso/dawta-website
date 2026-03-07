@@ -8,7 +8,7 @@ type SwipeCardProps = {
   isSubmitting?: boolean;
 };
 
-export default function SwipeCard({ match, onJudge, onPass, isSubmitting }: SwipeCardProps) {
+export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardProps) {
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const startXRef = useRef(0);

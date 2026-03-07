@@ -17,6 +17,9 @@ COPY backend/ .
 # Copy data folder
 COPY data ./data
 
+# Set data directory for Docker
+ENV DATA_DIR=/app/data
+
 # Verify data files are copied
 RUN test -f /app/data/projects.json || (echo "ERROR: projects.json not found!" && exit 1)
 
