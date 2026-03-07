@@ -41,15 +41,15 @@ class Settings(BaseSettings):
     @field_validator("cors_origins", mode="before")
     @classmethod
     def parse_cors_origins(cls, v):
-        """Parse CORS origins from comma-separated string if provided as string."""
+        """Parse CORS origins from comma or semicolon-separated string."""
         if isinstance(v, str):
-            # Split by comma and strip whitespace, filter out empty strings
-            return [origin.strip() for origin in v.split(",") if origin.strip()]
+            separator = ";" if ";" in v else ","
+            return [origin.strip() for origin in v.split(separator) if origin.strip()]
         return v
 
     # Server settings
     host: str = "0.0.0.0"
-    port: int = 8000  # Railway provides PORT env var automatically
+    port: int = 8000
 
     # Data directory settings
     # Default works for local development, override with DATA_DIR=/app/data for Docker
