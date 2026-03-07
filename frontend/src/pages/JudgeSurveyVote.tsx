@@ -1,20 +1,24 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle, XCircle, Database, Filter, X } from 'lucide-react';
 import {
-  fetchRandomMatch,
+  CheckCircle,
+  XCircle,
+  ChevronDown,
+  ChevronRight,
+  Search,
+  RotateCcw,
+} from 'lucide-react';
+import {
+  fetchAllMatches,
   fetchValidationStats,
-  fetchValidatedMatches,
   validateMatch,
+  clearMatchValidation,
   type SurveyVoteMatch,
   type ValidationStats,
 } from '../api/client';
-import {
-  PageHeader,
-  LoadingState,
-  PageLayout,
-  SwipeCard,
-} from '../components';
+import { PageHeader, LoadingState, PageLayout } from '../components';
+
+/* ─── Filter constants ─── */
 
 const SOURCE_OPTIONS = [
   { value: '', label: 'Tous' },
@@ -22,10 +26,27 @@ const SOURCE_OPTIONS = [
   { value: 'ESS', label: 'ESS' },
 ] as const;
 
-function SourceFilter({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+const STATUS_OPTIONS = [
+  { value: '', label: 'Toutes' },
+  { value: 'pending', label: 'En attente' },
+  { value: 'accepted', label: 'Acceptées' },
+  { value: 'refused', label: 'Refusées' },
+] as const;
+
+/* ─── Chip group (shared between source & status) ─── */
+
+function ChipGroup({
+  options,
+  value,
+  onChange,
+}: {
+  options: readonly { value: string; label: string }[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
   return (
-    <div className="flex items-center justify-center gap-1 mb-4">
-      {SOURCE_OPTIONS.map((opt) => (
+    <div className="flex items-center gap-1">
+      {options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
@@ -42,8 +63,11 @@ function SourceFilter({ value, onChange }: { value: string; onChange: (v: string
   );
 }
 
+/* ─── Stats bar (reused from before) ─── */
+
 function StatsBar({ stats }: { stats: ValidationStats }) {
-  const pctComplete = stats.total > 0 ? ((stats.accepted + stats.refused) / stats.total) * 100 : 0;
+  const pctComplete =
+    stats.total > 0 ? ((stats.accepted + stats.refused) / stats.total) * 100 : 0;
 
   return (
     <div className="mb-6 space-y-3">
@@ -66,7 +90,6 @@ function StatsBar({ stats }: { stats: ValidationStats }) {
         </div>
       </div>
 
-      {/* Progress bar */}
       <div className="max-w-md mx-auto">
         <div className="flex justify-between text-xs text-dawta-600 mb-1">
           <span>{stats.accepted + stats.refused} validées</span>
@@ -76,11 +99,15 @@ function StatsBar({ stats }: { stats: ValidationStats }) {
           <div className="h-full rounded-full transition-all duration-500 flex">
             <div
               className="h-full bg-green-500 transition-all duration-500"
-              style={{ width: stats.total > 0 ? `${(stats.accepted / stats.total) * 100}%` : '0%' }}
+              style={{
+                width: stats.total > 0 ? `${(stats.accepted / stats.total) * 100}%` : '0%',
+              }}
             />
             <div
               className="h-full bg-red-400 transition-all duration-500"
-              style={{ width: stats.total > 0 ? `${(stats.refused / stats.total) * 100}%` : '0%' }}
+              style={{
+                width: stats.total > 0 ? `${(stats.refused / stats.total) * 100}%` : '0%',
+              }}
             />
           </div>
         </div>
@@ -89,67 +116,172 @@ function StatsBar({ stats }: { stats: ValidationStats }) {
   );
 }
 
+/* ─── Small helpers ─── */
+
 function SourceBadge({ source }: { source?: string }) {
   if (!source) return null;
   const isESS = source === 'ESS';
   return (
-    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide ${
-      isESS
-        ? 'bg-purple-100 text-purple-700'
-        : 'bg-blue-100 text-blue-700'
-    }`}>
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide ${
+        isESS ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+      }`}
+    >
       {source}
     </span>
   );
 }
 
-function MatchDetailModal({ match, onClose }: { match: SurveyVoteMatch; onClose: () => void }) {
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
-  }, [onClose]);
+function StatusDot({ adminValidated }: { adminValidated?: boolean | null }) {
+  if (adminValidated === true)
+    return <span className="w-2.5 h-2.5 rounded-full bg-green-500 flex-shrink-0" title="Acceptée" />;
+  if (adminValidated === false)
+    return <span className="w-2.5 h-2.5 rounded-full bg-red-500 flex-shrink-0" title="Refusée" />;
+  return <span className="w-2.5 h-2.5 rounded-full bg-gray-300 flex-shrink-0" title="En attente" />;
+}
 
+function LlmBadge({ llmRelated }: { llmRelated?: boolean | null }) {
+  if (llmRelated == null) return null;
+  return (
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${
+        llmRelated ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+      }`}
+    >
+      LLM: {llmRelated ? 'Lié' : 'Non lié'}
+    </span>
+  );
+}
+
+/* ─── Types for grouped data ─── */
+
+interface MatchGroup {
+  questionId: string;
+  questionClean: string;
+  questionOriginal?: string;
+  source?: string;
+  matches: SurveyVoteMatch[];
+  classifiedCount: number;
+  topSimilarity: number;
+}
+
+/* ─── Match row ─── */
+
+function MatchRow({
+  match,
+  isExpanded,
+  onToggle,
+  onClassify,
+  isSubmitting,
+}: {
+  match: SurveyVoteMatch;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onClassify: (matchId: string, validated: boolean | null) => void;
+  isSubmitting: boolean;
+}) {
   const similarityPercent = Math.round((Number(match.similarityScore) || 0) * 100);
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
-      onClick={onClose}
+      className={`border rounded-lg transition-colors ${
+        match.adminValidated === true
+          ? 'border-green-200 bg-green-50/50'
+          : match.adminValidated === false
+          ? 'border-red-200 bg-red-50/50'
+          : 'border-theme-light bg-theme-secondary'
+      }`}
     >
-      <div
-        className="relative bg-theme-secondary rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-theme-light">
-          <div className="flex items-center gap-2">
-            <SourceBadge source={match.source} />
-            {match.adminValidated === true ? (
-              <span className="flex items-center gap-1 text-xs font-medium text-green-600">
-                <CheckCircle className="w-3.5 h-3.5" /> Acceptée
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-xs font-medium text-red-600">
-                <XCircle className="w-3.5 h-3.5" /> Refusée
-              </span>
-            )}
+      {/* Row summary */}
+      <div className="flex items-center gap-3 px-3 py-2">
+        <StatusDot adminValidated={match.adminValidated} />
+
+        <button
+          onClick={onToggle}
+          className="flex-1 min-w-0 text-left"
+        >
+          <div className="flex items-center gap-2 text-sm">
+            <span className="truncate text-theme-primary font-medium">
+              {match.voteSummaryClean || match.voteSummaryOriginal || '—'}
+            </span>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 rounded-lg text-theme-tertiary hover:text-theme-primary hover:bg-theme-tertiary/10 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+        </button>
+
+        {/* Similarity bar */}
+        <div className="hidden sm:flex items-center gap-2 w-32 flex-shrink-0">
+          <div className="flex-1 h-1.5 bg-theme-tertiary/20 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-dawta-500 rounded-full"
+              style={{ width: `${similarityPercent}%` }}
+            />
+          </div>
+          <span className="text-xs text-theme-tertiary w-8 text-right">{similarityPercent}%</span>
         </div>
 
-        <div className="p-5 space-y-5">
-          {/* Survey question */}
+        {match.daysBetween != null && (
+          <span className="hidden md:inline text-xs text-theme-tertiary flex-shrink-0 w-16 text-right">
+            {match.daysBetween}j
+          </span>
+        )}
+
+        <LlmBadge llmRelated={match.llmRelated} />
+
+        {/* Classification buttons */}
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onClassify(match.matchId, true);
+            }}
+            disabled={isSubmitting}
+            className={`p-1.5 rounded-md transition-colors ${
+              match.adminValidated === true
+                ? 'bg-green-500 text-white'
+                : 'text-green-600 hover:bg-green-100'
+            }`}
+            title="Accepter"
+          >
+            <CheckCircle className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onClassify(match.matchId, false);
+            }}
+            disabled={isSubmitting}
+            className={`p-1.5 rounded-md transition-colors ${
+              match.adminValidated === false
+                ? 'bg-red-500 text-white'
+                : 'text-red-600 hover:bg-red-100'
+            }`}
+            title="Refuser"
+          >
+            <XCircle className="w-4 h-4" />
+          </button>
+          {match.adminValidated != null && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onClassify(match.matchId, null);
+              }}
+              disabled={isSubmitting}
+              className="p-1.5 rounded-md text-gray-400 hover:bg-gray-100 transition-colors"
+              title="Remettre en attente"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Expanded detail */}
+      {isExpanded && (
+        <div className="px-4 pb-3 pt-1 border-t border-theme-light/50 space-y-3 text-sm">
           <div>
-            <div className="text-xs font-semibold text-dawta-600 uppercase tracking-wide mb-1.5">
+            <div className="text-xs font-semibold text-dawta-600 uppercase tracking-wide mb-1">
               Question de sondage
             </div>
-            <p className="text-theme-primary text-sm leading-relaxed">{match.questionClean}</p>
+            <p className="text-theme-primary">{match.questionClean}</p>
             {match.questionOriginal && match.questionOriginal !== match.questionClean && (
               <p className="text-theme-tertiary text-xs italic mt-1">{match.questionOriginal}</p>
             )}
@@ -160,124 +292,107 @@ function MatchDetailModal({ match, onClose }: { match: SurveyVoteMatch; onClose:
             )}
           </div>
 
-          <div className="border-t border-theme-light" />
-
-          {/* Vote */}
           <div>
-            <div className="text-xs font-semibold text-bordeaux uppercase tracking-wide mb-1.5">
+            <div className="text-xs font-semibold text-bordeaux uppercase tracking-wide mb-1">
               Vote du Parlement Européen
             </div>
-            <p className="text-theme-secondary text-sm leading-relaxed">{match.voteSummaryClean}</p>
+            <p className="text-theme-primary">{match.voteSummaryClean}</p>
             {match.voteSummaryOriginal && match.voteSummaryOriginal !== match.voteSummaryClean && (
-              <p className="text-theme-tertiary text-xs italic mt-1">{match.voteSummaryOriginal}</p>
+              <p className="text-theme-tertiary text-xs italic mt-1">
+                {match.voteSummaryOriginal}
+              </p>
             )}
             {match.voteDate && (
               <p className="text-theme-tertiary text-xs mt-1">
                 Vote : {match.voteDate}
-                {match.daysBetween != null && <span className="ml-2">({match.daysBetween} jours d'écart)</span>}
+                {match.daysBetween != null && (
+                  <span className="ml-2">({match.daysBetween} jours d'écart)</span>
+                )}
               </p>
             )}
           </div>
 
-          <div className="border-t border-theme-light" />
-
-          {/* Scores */}
-          <div className="space-y-3">
+          {/* Similarity + LLM */}
+          <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <div className="text-xs text-theme-tertiary w-28 flex-shrink-0">Similarité :</div>
-              <div className="flex-1 h-2 bg-theme-tertiary/30 rounded-full overflow-hidden">
+              <span className="text-xs text-theme-tertiary w-24">Similarité :</span>
+              <div className="flex-1 h-2 bg-theme-tertiary/20 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-dawta-500 rounded-full"
                   style={{ width: `${similarityPercent}%` }}
                 />
               </div>
-              <div className="text-xs text-theme-tertiary font-medium w-10 text-right flex-shrink-0">
+              <span className="text-xs text-theme-tertiary w-10 text-right">
                 {similarityPercent}%
-              </div>
+              </span>
             </div>
-
-            {match.llmRelated != null && (
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <div className="text-xs text-theme-tertiary w-28">Avis LLM :</div>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                    match.llmRelated ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                  }`}>
-                    {match.llmRelated ? 'Lié' : 'Non lié'}
-                  </span>
-                </div>
-                {match.llmExplanation && (
-                  <p className="text-xs text-theme-tertiary italic pl-[7.5rem]">{match.llmExplanation}</p>
-                )}
+            {match.llmExplanation && (
+              <div>
+                <span className="text-xs text-theme-tertiary">Explication LLM : </span>
+                <span className="text-xs text-theme-secondary italic">{match.llmExplanation}</span>
               </div>
             )}
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
-function ValidatedTable({ matches, filter, onFilterChange, onSelect }: {
-  matches: SurveyVoteMatch[];
-  filter: string;
-  onFilterChange: (f: string) => void;
-  onSelect: (m: SurveyVoteMatch) => void;
-}) {
-  return (
-    <div className="mt-8">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-semibold text-theme-primary">Paires validées</h3>
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-theme-tertiary" />
-          <select
-            value={filter}
-            onChange={(e) => onFilterChange(e.target.value)}
-            className="text-sm border border-theme-light rounded-lg px-2 py-1 bg-theme-secondary text-theme-primary"
-          >
-            <option value="">Toutes</option>
-            <option value="accepted">Acceptées</option>
-            <option value="refused">Refusées</option>
-          </select>
-        </div>
-      </div>
+/* ─── Question group ─── */
 
-      {matches.length === 0 ? (
-        <p className="text-theme-tertiary text-sm text-center py-6">Aucune paire validée pour l'instant.</p>
-      ) : (
-        <div className="space-y-2 max-h-[400px] overflow-y-auto">
-          {matches.map((m) => (
-            <button
+function QuestionGroup({
+  group,
+  expandedMatches,
+  onToggleMatch,
+  onClassify,
+  submittingId,
+}: {
+  group: MatchGroup;
+  expandedMatches: Set<string>;
+  onToggleMatch: (id: string) => void;
+  onClassify: (matchId: string, validated: boolean | null) => void;
+  submittingId: string | null;
+}) {
+  const [collapsed, setCollapsed] = useState(false);
+
+  return (
+    <div className="border border-theme-light rounded-xl overflow-hidden">
+      {/* Group header */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="w-full flex items-center gap-3 px-4 py-3 bg-theme-secondary/50 hover:bg-theme-secondary transition-colors text-left"
+      >
+        {collapsed ? (
+          <ChevronRight className="w-4 h-4 text-theme-tertiary flex-shrink-0" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-theme-tertiary flex-shrink-0" />
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <SourceBadge source={group.source} />
+            <span className="text-sm font-medium text-theme-primary truncate">
+              {group.questionClean}
+            </span>
+          </div>
+        </div>
+        <span className="text-xs text-theme-tertiary flex-shrink-0">
+          {group.classifiedCount}/{group.matches.length} classifiées
+        </span>
+      </button>
+
+      {/* Pair rows */}
+      {!collapsed && (
+        <div className="p-2 space-y-1.5">
+          {group.matches.map((m) => (
+            <MatchRow
               key={m.matchId}
-              onClick={() => onSelect(m)}
-              className={`w-full text-left p-3 rounded-lg border text-sm transition-opacity hover:opacity-80 ${
-                m.adminValidated === true
-                  ? 'bg-green-50 border-green-200'
-                  : 'bg-red-50 border-red-200'
-              }`}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <SourceBadge source={m.source} />
-                    <p className="font-medium text-theme-primary truncate">{m.questionClean}</p>
-                  </div>
-                  <p className="text-theme-tertiary truncate mt-0.5">{m.voteSummaryClean}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  {m.similarityScore != null && (
-                    <span className="text-xs text-theme-tertiary">
-                      {Math.round(m.similarityScore * 100)}%
-                    </span>
-                  )}
-                  {m.adminValidated === true ? (
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                  ) : (
-                    <XCircle className="w-4 h-4 text-red-500" />
-                  )}
-                </div>
-              </div>
-            </button>
+              match={m}
+              isExpanded={expandedMatches.has(m.matchId)}
+              onToggle={() => onToggleMatch(m.matchId)}
+              onClassify={onClassify}
+              isSubmitting={submittingId === m.matchId}
+            />
           ))}
         </div>
       )}
@@ -285,126 +400,189 @@ function ValidatedTable({ matches, filter, onFilterChange, onSelect }: {
   );
 }
 
+/* ─── Main page ─── */
+
 export default function JudgeSurveyVote() {
-  const [lastAction, setLastAction] = useState<'accepted' | 'refused' | null>(null);
-  const [dashboardFilter, setDashboardFilter] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
-  const [selectedMatch, setSelectedMatch] = useState<SurveyVoteMatch | null>(null);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedMatches, setExpandedMatches] = useState<Set<string>>(new Set());
+  const [submittingId, setSubmittingId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  // Stats
-  const { data: stats, refetch: refetchStats } = useQuery({
+  const {
+    data: allMatches = [],
+    isLoading,
+  } = useQuery({
+    queryKey: ['allMatches'],
+    queryFn: () => fetchAllMatches(),
+  });
+
+  const { data: stats } = useQuery({
     queryKey: ['validationStats'],
     queryFn: fetchValidationStats,
-  });
-
-  // Random unvalidated match, respects source filter
-  const {
-    data: match,
-    isLoading: isLoadingMatch,
-    error: matchError,
-    refetch: refetchMatch,
-  } = useQuery({
-    queryKey: ['randomMatch', sourceFilter],
-    queryFn: () => fetchRandomMatch(sourceFilter || undefined),
-    retry: false,
-  });
-
-  // Validated matches for dashboard table
-  const { data: validatedMatches = [] } = useQuery({
-    queryKey: ['validatedMatches', dashboardFilter],
-    queryFn: () => fetchValidatedMatches(dashboardFilter || undefined),
   });
 
   const validateMutation = useMutation({
     mutationFn: ({ matchId, validated }: { matchId: string; validated: boolean }) =>
       validateMatch(matchId, validated),
-    onSuccess: (_result, variables) => {
-      setLastAction(variables.validated ? 'accepted' : 'refused');
-      refetchMatch();
-      refetchStats();
-      queryClient.invalidateQueries({ queryKey: ['validatedMatches'] });
-      setTimeout(() => setLastAction(null), 1500);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allMatches'] });
+      queryClient.invalidateQueries({ queryKey: ['validationStats'] });
     },
   });
 
-  const handleJudge = useCallback(
-    (accepted: boolean) => {
-      if (!match) return;
-      setLastAction(null);
-      validateMutation.mutate({ matchId: match.matchId, validated: accepted });
+  const clearMutation = useMutation({
+    mutationFn: (matchId: string) => clearMatchValidation(matchId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allMatches'] });
+      queryClient.invalidateQueries({ queryKey: ['validationStats'] });
     },
-    [match, validateMutation],
+  });
+
+  const handleClassify = useCallback(
+    (matchId: string, validated: boolean | null) => {
+      setSubmittingId(matchId);
+      if (validated === null) {
+        clearMutation.mutate(matchId, {
+          onSettled: () => setSubmittingId(null),
+        });
+      } else {
+        validateMutation.mutate(
+          { matchId, validated },
+          { onSettled: () => setSubmittingId(null) },
+        );
+      }
+    },
+    [validateMutation, clearMutation],
   );
 
+  const toggleMatchExpanded = useCallback((id: string) => {
+    setExpandedMatches((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  // Client-side filtering
+  const filteredMatches = useMemo(() => {
+    let result = allMatches;
+
+    if (sourceFilter) {
+      result = result.filter((m) => m.source === sourceFilter);
+    }
+
+    if (statusFilter === 'pending') {
+      result = result.filter((m) => m.adminValidated == null);
+    } else if (statusFilter === 'accepted') {
+      result = result.filter((m) => m.adminValidated === true);
+    } else if (statusFilter === 'refused') {
+      result = result.filter((m) => m.adminValidated === false);
+    }
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (m) =>
+          (m.questionClean?.toLowerCase().includes(q)) ||
+          (m.questionOriginal?.toLowerCase().includes(q)) ||
+          (m.voteSummaryClean?.toLowerCase().includes(q)) ||
+          (m.voteSummaryOriginal?.toLowerCase().includes(q)),
+      );
+    }
+
+    return result;
+  }, [allMatches, sourceFilter, statusFilter, searchQuery]);
+
+  // Group by questionId, sorted by top similarity
+  const groups = useMemo(() => {
+    const map = new Map<string, MatchGroup>();
+
+    for (const m of filteredMatches) {
+      const qId = m.questionId || m.matchId;
+      if (!map.has(qId)) {
+        map.set(qId, {
+          questionId: qId,
+          questionClean: m.questionClean || '(question inconnue)',
+          questionOriginal: m.questionOriginal,
+          source: m.source,
+          matches: [],
+          classifiedCount: 0,
+          topSimilarity: 0,
+        });
+      }
+      const group = map.get(qId)!;
+      group.matches.push(m);
+      if (m.adminValidated != null) group.classifiedCount++;
+      const sim = Number(m.similarityScore) || 0;
+      if (sim > group.topSimilarity) group.topSimilarity = sim;
+    }
+
+    // Sort matches within each group by similarity DESC
+    for (const group of map.values()) {
+      group.matches.sort(
+        (a, b) => (Number(b.similarityScore) || 0) - (Number(a.similarityScore) || 0),
+      );
+    }
+
+    // Sort groups by their top similarity DESC
+    return Array.from(map.values()).sort((a, b) => b.topSimilarity - a.topSimilarity);
+  }, [filteredMatches]);
+
   return (
-    <PageLayout maxWidth="2xl">
+    <PageLayout maxWidth="4xl">
       <PageHeader
         title="Validation des paires sondage-vote"
         subtitle="Acceptez ou refusez les correspondances"
       />
 
-      <SourceFilter value={sourceFilter} onChange={setSourceFilter} />
-
       {stats && <StatsBar stats={stats} />}
 
-      {isLoadingMatch && !match && (
-        <LoadingState message="Chargement d'une paire..." />
-      )}
-
-      {matchError && (
-        <div className="p-4 bg-dawta-50 rounded-xl border border-dawta-200 text-center">
-          <Database className="w-8 h-8 text-dawta-400 mx-auto mb-2" />
-          <p className="text-dawta-700 font-medium">Toutes les paires ont été validées !</p>
-          <p className="text-dawta-600 text-sm mt-1">
-            {sourceFilter
-              ? `Plus de paires ${sourceFilter} en attente.`
-              : "Il n'y a plus de paires en attente."}
-          </p>
-        </div>
-      )}
-
-      {match && !matchError && (
-        <div className="relative">
-          {lastAction && (
-            <div
-              className={`absolute -top-2 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full text-sm font-medium shadow-lg transition-all animate-pulse ${
-                lastAction === 'accepted'
-                  ? 'bg-green-500 text-white'
-                  : 'bg-red-500 text-white'
-              }`}
-            >
-              {lastAction === 'accepted' ? (
-                <span className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4" /> Acceptée
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
-                  <XCircle className="w-4 h-4" /> Refusée
-                </span>
-              )}
-            </div>
-          )}
-
-          <SwipeCard
-            match={match}
-            onJudge={handleJudge}
-            isSubmitting={validateMutation.isPending}
+      {/* Filters row */}
+      <div className="flex flex-wrap items-center gap-4 mb-6">
+        <ChipGroup options={SOURCE_OPTIONS} value={sourceFilter} onChange={setSourceFilter} />
+        <ChipGroup options={STATUS_OPTIONS} value={statusFilter} onChange={setStatusFilter} />
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-theme-tertiary" />
+          <input
+            type="text"
+            placeholder="Rechercher question ou vote..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-3 py-1.5 text-sm rounded-lg border border-theme-light bg-theme-secondary text-theme-primary placeholder:text-theme-tertiary focus:outline-none focus:ring-2 focus:ring-dawta-400"
           />
         </div>
-      )}
+      </div>
 
-      {/* Dashboard table — always visible */}
-      <ValidatedTable
-        matches={validatedMatches}
-        filter={dashboardFilter}
-        onFilterChange={setDashboardFilter}
-        onSelect={setSelectedMatch}
-      />
+      {/* Count */}
+      <p className="text-xs text-theme-tertiary mb-3">
+        {filteredMatches.length} paire{filteredMatches.length !== 1 ? 's' : ''} — {groups.length}{' '}
+        question{groups.length !== 1 ? 's' : ''}
+      </p>
 
-      {/* Detail modal */}
-      {selectedMatch && (
-        <MatchDetailModal match={selectedMatch} onClose={() => setSelectedMatch(null)} />
+      {isLoading && <LoadingState message="Chargement des paires..." />}
+
+      {/* Grouped list */}
+      {!isLoading && (
+        <div className="space-y-4">
+          {groups.map((group) => (
+            <QuestionGroup
+              key={group.questionId}
+              group={group}
+              expandedMatches={expandedMatches}
+              onToggleMatch={toggleMatchExpanded}
+              onClassify={handleClassify}
+              submittingId={submittingId}
+            />
+          ))}
+          {groups.length === 0 && !isLoading && (
+            <p className="text-center text-theme-tertiary py-8">
+              Aucune paire ne correspond aux filtres.
+            </p>
+          )}
+        </div>
       )}
 
       {/* Legend */}

@@ -56,6 +56,19 @@ class JudgmentService:
             return False
 
     @classmethod
+    def clear_match_validation(cls, match_id: str) -> bool:
+        """Reset admin_validated to NULL on a match. Returns True on success."""
+        try:
+            supabase = get_supabase()
+            supabase.table("survey_vote_matches").update(
+                {"admin_validated": None}
+            ).eq("match_id", match_id).execute()
+            return True
+        except Exception:
+            logger.exception("Error clearing match validation")
+            return False
+
+    @classmethod
     def get_validation_stats(cls) -> ValidationStats:
         """Get counts of accepted / refused / pending matches."""
         try:
@@ -98,6 +111,38 @@ class JudgmentService:
         except Exception:
             logger.exception("Error fetching validation stats")
             return ValidationStats()
+
+    @classmethod
+    def get_all_matches(
+        cls, source: str | None = None, status: str | None = None
+    ) -> list[SurveyVoteMatch]:
+        """Get all matches, ordered by similarity_score DESC.
+
+        Optional filters:
+        - source: 'ESS' or 'Eurobarometer'
+        - status: 'accepted', 'refused', or 'pending'
+        """
+        try:
+            supabase = get_supabase()
+            query = supabase.table("survey_vote_matches").select("*")
+
+            if source:
+                query = query.eq("source", source)
+
+            if status == "accepted":
+                query = query.eq("admin_validated", True)
+            elif status == "refused":
+                query = query.eq("admin_validated", False)
+            elif status == "pending":
+                query = query.is_("admin_validated", "null")
+
+            response = (
+                query.order("similarity_score", desc=True).limit(1000).execute()
+            )
+            return [cls._row_to_match(row) for row in response.data]
+        except Exception:
+            logger.exception("Error fetching all matches")
+            return []
 
     @classmethod
     def get_validated_matches(cls, status: str | None = None) -> list[SurveyVoteMatch]:

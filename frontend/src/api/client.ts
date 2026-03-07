@@ -115,10 +115,31 @@ export async function validateMatch(matchId: string, validated: boolean): Promis
   }
 }
 
+export async function clearMatchValidation(matchId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/judgments/clear?match_id=${encodeURIComponent(matchId)}`, {
+    method: 'POST',
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to clear match: ${response.status} ${response.statusText}`);
+  }
+}
+
 export async function fetchValidationStats(): Promise<ValidationStats> {
   const response = await fetch(`${API_BASE_URL}/api/judgments/stats`);
   if (!response.ok) {
     throw new Error(`Failed to fetch stats: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}
+
+export async function fetchAllMatches(source?: string, status?: string): Promise<SurveyVoteMatch[]> {
+  const params = new URLSearchParams();
+  if (source) params.set('source', source);
+  if (status) params.set('status', status);
+  const qs = params.toString() ? `?${params.toString()}` : '';
+  const response = await fetch(`${API_BASE_URL}/api/judgments/matches/all${qs}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch all matches: ${response.status} ${response.statusText}`);
   }
   return response.json();
 }
