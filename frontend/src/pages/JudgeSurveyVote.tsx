@@ -36,16 +36,23 @@ const STATUS_OPTIONS = [
 /* ─── Chip group (shared between source & status) ─── */
 
 function ChipGroup({
+  label,
   options,
   value,
   onChange,
 }: {
+  label?: string;
   options: readonly { value: string; label: string }[];
   value: string;
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1.5">
+      {label && (
+        <span className="text-xs font-medium text-theme-tertiary uppercase tracking-wide">
+          {label}
+        </span>
+      )}
       {options.map((opt) => (
         <button
           key={opt.value}
@@ -155,10 +162,12 @@ function LlmBadge({ llmRelated }: { llmRelated?: boolean | null }) {
 
 /* ─── Types for grouped data ─── */
 
+type GroupBy = 'question' | 'vote';
+
 interface MatchGroup {
-  questionId: string;
-  questionClean: string;
-  questionOriginal?: string;
+  groupId: string;
+  groupLabel: string;
+  groupSublabel?: string;
   source?: string;
   matches: SurveyVoteMatch[];
   classifiedCount: number;
@@ -173,12 +182,14 @@ function MatchRow({
   onToggle,
   onClassify,
   isSubmitting,
+  groupBy,
 }: {
   match: SurveyVoteMatch;
   isExpanded: boolean;
   onToggle: () => void;
   onClassify: (matchId: string, validated: boolean | null) => void;
   isSubmitting: boolean;
+  groupBy: GroupBy;
 }) {
   const similarityPercent = Math.round((Number(match.similarityScore) || 0) * 100);
 
@@ -202,7 +213,9 @@ function MatchRow({
         >
           <div className="flex items-center gap-2 text-sm">
             <span className="truncate text-theme-primary font-medium">
-              {match.voteSummaryClean || match.voteSummaryOriginal || '—'}
+              {groupBy === 'question'
+                ? match.voteSummaryClean || match.voteSummaryOriginal || '—'
+                : match.questionClean || match.questionOriginal || '—'}
             </span>
           </div>
         </button>
@@ -347,21 +360,32 @@ function QuestionGroup({
   onToggleMatch,
   onClassify,
   submittingId,
+  groupBy,
 }: {
   group: MatchGroup;
   expandedMatches: Set<string>;
   onToggleMatch: (id: string) => void;
   onClassify: (matchId: string, validated: boolean | null) => void;
   submittingId: string | null;
+  groupBy: GroupBy;
 }) {
   const [collapsed, setCollapsed] = useState(false);
+  const isComplete = group.classifiedCount === group.matches.length;
 
   return (
-    <div className="border border-theme-light rounded-xl overflow-hidden">
+    <div
+      className={`border rounded-xl overflow-hidden transition-colors ${
+        isComplete ? 'border-green-200' : 'border-theme-light'
+      }`}
+    >
       {/* Group header */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="w-full flex items-center gap-3 px-4 py-3 bg-theme-secondary/50 hover:bg-theme-secondary transition-colors text-left"
+        className={`w-full flex items-center gap-3 px-4 py-3 transition-colors text-left ${
+          isComplete
+            ? 'bg-green-50/60 hover:bg-green-50'
+            : 'bg-theme-secondary/50 hover:bg-theme-secondary'
+        }`}
       >
         {collapsed ? (
           <ChevronRight className="w-4 h-4 text-theme-tertiary flex-shrink-0" />
@@ -370,14 +394,23 @@ function QuestionGroup({
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <SourceBadge source={group.source} />
-            <span className="text-sm font-medium text-theme-primary truncate">
-              {group.questionClean}
+            {groupBy === 'question' && <SourceBadge source={group.source} />}
+            <span
+              className={`text-sm font-medium truncate ${
+                isComplete ? 'text-green-700' : 'text-theme-primary'
+              }`}
+            >
+              {group.groupLabel}
             </span>
           </div>
         </div>
-        <span className="text-xs text-theme-tertiary flex-shrink-0">
-          {group.classifiedCount}/{group.matches.length} classifiées
+        <span
+          className={`text-xs flex-shrink-0 flex items-center gap-1.5 ${
+            isComplete ? 'text-green-600 font-medium' : 'text-theme-tertiary'
+          }`}
+        >
+          {isComplete && <CheckCircle className="w-3.5 h-3.5" />}
+          {group.classifiedCount}/{group.matches.length}
         </span>
       </button>
 
@@ -392,6 +425,7 @@ function QuestionGroup({
               onToggle={() => onToggleMatch(m.matchId)}
               onClassify={onClassify}
               isSubmitting={submittingId === m.matchId}
+              groupBy={groupBy}
             />
           ))}
         </div>
@@ -403,6 +437,7 @@ function QuestionGroup({
 /* ─── Main page ─── */
 
 export default function JudgeSurveyVote() {
+  const [groupBy, setGroupBy] = useState<GroupBy>('question');
   const [sourceFilter, setSourceFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -496,24 +531,32 @@ export default function JudgeSurveyVote() {
     return result;
   }, [allMatches, sourceFilter, statusFilter, searchQuery]);
 
-  // Group by questionId, sorted by top similarity
+  // Group by question or by vote, sorted by top similarity
   const groups = useMemo(() => {
     const map = new Map<string, MatchGroup>();
 
     for (const m of filteredMatches) {
-      const qId = m.questionId || m.matchId;
-      if (!map.has(qId)) {
-        map.set(qId, {
-          questionId: qId,
-          questionClean: m.questionClean || '(question inconnue)',
-          questionOriginal: m.questionOriginal,
+      const key =
+        groupBy === 'question'
+          ? m.questionId || m.matchId
+          : String(m.voteId ?? m.matchId);
+
+      if (!map.has(key)) {
+        map.set(key, {
+          groupId: key,
+          groupLabel:
+            groupBy === 'question'
+              ? m.questionClean || '(question inconnue)'
+              : m.voteSummaryClean || m.voteSummaryOriginal || '(vote inconnu)',
+          groupSublabel:
+            groupBy === 'question' ? m.questionOriginal : m.voteSummaryOriginal,
           source: m.source,
           matches: [],
           classifiedCount: 0,
           topSimilarity: 0,
         });
       }
-      const group = map.get(qId)!;
+      const group = map.get(key)!;
       group.matches.push(m);
       if (m.adminValidated != null) group.classifiedCount++;
       const sim = Number(m.similarityScore) || 0;
@@ -529,7 +572,7 @@ export default function JudgeSurveyVote() {
 
     // Sort groups by their top similarity DESC
     return Array.from(map.values()).sort((a, b) => b.topSimilarity - a.topSimilarity);
-  }, [filteredMatches]);
+  }, [filteredMatches, groupBy]);
 
   return (
     <PageLayout maxWidth="4xl">
@@ -542,8 +585,37 @@ export default function JudgeSurveyVote() {
 
       {/* Filters row */}
       <div className="flex flex-wrap items-center gap-4 mb-6">
-        <ChipGroup options={SOURCE_OPTIONS} value={sourceFilter} onChange={setSourceFilter} />
-        <ChipGroup options={STATUS_OPTIONS} value={statusFilter} onChange={setStatusFilter} />
+        {/* Group-by toggle */}
+        <div className="flex items-center bg-theme-secondary rounded-lg p-0.5 border border-theme-light">
+          <button
+            onClick={() => setGroupBy('question')}
+            className={`px-3 py-1.5 text-sm rounded-md font-medium transition-colors ${
+              groupBy === 'question'
+                ? 'bg-dawta-600 text-white shadow-sm'
+                : 'text-theme-tertiary hover:text-theme-primary'
+            }`}
+          >
+            Par question
+          </button>
+          <button
+            onClick={() => {
+              setGroupBy('vote');
+              setSourceFilter('');
+            }}
+            className={`px-3 py-1.5 text-sm rounded-md font-medium transition-colors ${
+              groupBy === 'vote'
+                ? 'bg-dawta-600 text-white shadow-sm'
+                : 'text-theme-tertiary hover:text-theme-primary'
+            }`}
+          >
+            Par vote
+          </button>
+        </div>
+
+        {groupBy === 'question' && (
+          <ChipGroup label="Source" options={SOURCE_OPTIONS} value={sourceFilter} onChange={setSourceFilter} />
+        )}
+        <ChipGroup label="Statut" options={STATUS_OPTIONS} value={statusFilter} onChange={setStatusFilter} />
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-theme-tertiary" />
           <input
@@ -559,7 +631,9 @@ export default function JudgeSurveyVote() {
       {/* Count */}
       <p className="text-xs text-theme-tertiary mb-3">
         {filteredMatches.length} paire{filteredMatches.length !== 1 ? 's' : ''} — {groups.length}{' '}
-        question{groups.length !== 1 ? 's' : ''}
+        {groupBy === 'question'
+          ? `question${groups.length !== 1 ? 's' : ''}`
+          : `vote${groups.length !== 1 ? 's' : ''}`}
       </p>
 
       {isLoading && <LoadingState message="Chargement des paires..." />}
@@ -569,12 +643,13 @@ export default function JudgeSurveyVote() {
         <div className="space-y-4">
           {groups.map((group) => (
             <QuestionGroup
-              key={group.questionId}
+              key={group.groupId}
               group={group}
               expandedMatches={expandedMatches}
               onToggleMatch={toggleMatchExpanded}
               onClassify={handleClassify}
               submittingId={submittingId}
+              groupBy={groupBy}
             />
           ))}
           {groups.length === 0 && !isLoading && (
