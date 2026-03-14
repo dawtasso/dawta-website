@@ -71,3 +71,31 @@ class AdminJudgmentRequest(BaseModel):
     validated: bool
 
     model_config = {"populate_by_name": True}
+
+
+class AnswerAlignment(BaseModel):
+    """A single answer label with its alignment classification."""
+
+    answer_label: str = Field(alias="answerLabel")
+    alignment: str  # "aligned", "opposed", "neutral", "unknown"
+
+    model_config = {"populate_by_name": True}
+
+
+class AnswerAlignmentRequest(BaseModel):
+    """Request to save answer alignments for a match."""
+
+    match_id: str = Field(alias="matchId")
+    alignments: list[AnswerAlignment]
+
+    model_config = {"populate_by_name": True}
+
+
+class MatchWithAnswers(BaseModel):
+    """An accepted match with its available survey answers and saved alignments."""
+
+    match: SurveyVoteMatch
+    answers: list[str] = []
+    alignments: dict[str, str] = {}  # answer_label -> alignment
+
+    model_config = {"populate_by_name": True}
