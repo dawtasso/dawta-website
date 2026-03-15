@@ -33,7 +33,13 @@ def _load_answers() -> dict[tuple[str, str], list[str]]:
         demo_type = row.get("demographic_type", "").strip()
 
         # Only keep non-summary, total-level rows to get unique answer labels
-        if not sheet_id or not file_name or not answer or is_summary or demo_type != "total":
+        if (
+            not sheet_id
+            or not file_name
+            or not answer
+            or is_summary
+            or demo_type != "total"
+        ):
             continue
 
         key = (sheet_id, file_name)
@@ -57,7 +63,9 @@ class AnswerService:
         return answers.get((question_id, survey_file), [])
 
     @classmethod
-    def get_answers_bulk(cls, keys: list[tuple[str, str]]) -> dict[tuple[str, str], list[str]]:
+    def get_answers_bulk(
+        cls, keys: list[tuple[str, str]]
+    ) -> dict[tuple[str, str], list[str]]:
         """Return answers for multiple (question_id, survey_file) pairs at once."""
         answers = _load_answers()
         return {k: answers.get(k, []) for k in keys}
@@ -114,7 +122,7 @@ class AnswerService:
             # Look up the match to get survey_file and vote_id
             match_resp = (
                 supabase.table("survey_vote_matches")
-                .select("survey_file, vote_id")
+                .select("survey_file, vote_id, question_id")
                 .eq("match_id", match_id)
                 .limit(1)
                 .execute()
@@ -126,6 +134,7 @@ class AnswerService:
                     "match_id": match_id,
                     "answer_label": a["answer_label"],
                     "alignment": a["alignment"],
+                    "question_id": match_data.get("question_id"),
                     "survey_file": match_data.get("survey_file"),
                     "vote_id": match_data.get("vote_id"),
                 }
