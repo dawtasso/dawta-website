@@ -152,3 +152,47 @@ export async function fetchValidatedMatches(status?: string): Promise<SurveyVote
   }
   return response.json();
 }
+
+// ─── Answer alignment types & API ───
+
+export interface MatchWithAnswers {
+  match: SurveyVoteMatch;
+  answers: string[];
+  alignments: Record<string, string>; // answer_label -> alignment
+}
+
+export type Alignment = 'aligned' | 'opposed' | 'neutral' | 'unknown' | 'unrelated';
+
+export async function fetchAcceptedMatchesWithAnswers(): Promise<MatchWithAnswers[]> {
+  const response = await fetch(`${API_BASE_URL}/api/judgments/answers/matches`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch matches with answers: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}
+
+export async function saveAnswerAlignments(
+  matchId: string,
+  alignments: { answerLabel: string; alignment: string }[],
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/judgments/answers/label`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ matchId, alignments }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to save alignments: ${response.status} ${response.statusText}`);
+  }
+}
+
+export async function fetchLabellingStats(): Promise<{
+  totalAccepted: number;
+  labelled: number;
+  remaining: number;
+}> {
+  const response = await fetch(`${API_BASE_URL}/api/judgments/answers/stats`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch labelling stats: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}

@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import {
   CheckCircle,
   XCircle,
@@ -7,6 +8,7 @@ import {
   ChevronRight,
   Search,
   RotateCcw,
+  Tags,
 } from 'lucide-react';
 import {
   fetchAllMatches,
@@ -580,6 +582,16 @@ export default function JudgeSurveyVote() {
         title="Validation des paires sondage-vote"
         subtitle="Acceptez ou refusez les correspondances"
       />
+
+      <div className="mb-4">
+        <Link
+          to="/projects/ue-pair-correlation/label-answers"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-dawta-600 text-white hover:bg-dawta-700 transition-colors shadow-sm"
+        >
+          <Tags className="w-4 h-4" />
+          Labeliser les réponses des paires acceptées
+        </Link>
+      </div>
 
       {stats && <StatsBar stats={stats} />}
 
