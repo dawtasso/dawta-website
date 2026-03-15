@@ -214,6 +214,9 @@ function FocusCard({
             {item.match.surveyFile && (
               <p className="text-xs text-theme-tertiary mt-1">
                 {item.match.surveyFile?.replace('.xlsx', '')}
+                {item.match.questionId && (
+                  <span className="ml-2 font-mono text-dawta-500">#{item.match.questionId}</span>
+                )}
                 {item.match.surveyDate && ` — ${item.match.surveyDate}`}
               </p>
             )}
