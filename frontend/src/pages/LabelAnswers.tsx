@@ -21,10 +21,11 @@ import { PageHeader, LoadingState, PageLayout } from '../components';
 /* ─── Constants ─── */
 
 const ALIGNMENTS: { value: Alignment; label: string; color: string; activeColor: string; key: string }[] = [
-  { value: 'aligned', label: 'Aligné', color: 'text-green-600', activeColor: 'bg-green-500 text-white ring-green-300', key: '1' },
-  { value: 'opposed', label: 'Opposé', color: 'text-red-600', activeColor: 'bg-red-500 text-white ring-red-300', key: '2' },
-  { value: 'neutral', label: 'Neutre', color: 'text-gray-600', activeColor: 'bg-gray-500 text-white ring-gray-300', key: '3' },
-  { value: 'unknown', label: 'Ne sait pas', color: 'text-yellow-600', activeColor: 'bg-yellow-500 text-white ring-yellow-300', key: '4' },
+  { value: 'aligned', label: 'Aligné', color: 'text-green-600', activeColor: 'bg-green-500 text-white ring-green-300', key: 'a' },
+  { value: 'opposed', label: 'Opposé', color: 'text-red-600', activeColor: 'bg-red-500 text-white ring-red-300', key: 'z' },
+  { value: 'neutral', label: 'Neutre', color: 'text-gray-600', activeColor: 'bg-gray-500 text-white ring-gray-300', key: 'e' },
+  { value: 'unrelated', label: 'Non relié', color: 'text-slate-600', activeColor: 'bg-slate-500 text-white ring-slate-300', key: 'r' },
+  { value: 'unknown', label: 'Ne sait pas', color: 'text-yellow-600', activeColor: 'bg-yellow-500 text-white ring-yellow-300', key: 't' },
 ];
 
 const STATUS_FILTERS = [
@@ -152,18 +153,18 @@ function FocusCard({
 
       const currentAnswer = answers[activeAnswerIndex];
 
-      if (e.key === '1' && currentAnswer) {
-        setAlignment(currentAnswer, 'aligned');
-        if (activeAnswerIndex < answers.length - 1) setActiveAnswerIndex((i) => i + 1);
-      } else if (e.key === '2' && currentAnswer) {
-        setAlignment(currentAnswer, 'opposed');
-        if (activeAnswerIndex < answers.length - 1) setActiveAnswerIndex((i) => i + 1);
-      } else if (e.key === '3' && currentAnswer) {
-        setAlignment(currentAnswer, 'neutral');
-        if (activeAnswerIndex < answers.length - 1) setActiveAnswerIndex((i) => i + 1);
-      } else if (e.key === '4' && currentAnswer) {
-        setAlignment(currentAnswer, 'unknown');
-        if (activeAnswerIndex < answers.length - 1) setActiveAnswerIndex((i) => i + 1);
+      const advance = () => { if (activeAnswerIndex < answers.length - 1) setActiveAnswerIndex((i) => i + 1); };
+
+      if (e.key === 'a' && currentAnswer) {
+        setAlignment(currentAnswer, 'aligned'); advance();
+      } else if (e.key === 'z' && currentAnswer) {
+        setAlignment(currentAnswer, 'opposed'); advance();
+      } else if (e.key === 'e' && currentAnswer) {
+        setAlignment(currentAnswer, 'neutral'); advance();
+      } else if (e.key === 'r' && currentAnswer) {
+        setAlignment(currentAnswer, 'unrelated'); advance();
+      } else if (e.key === 't' && currentAnswer) {
+        setAlignment(currentAnswer, 'unknown'); advance();
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setActiveAnswerIndex((i) => Math.max(0, i - 1));
@@ -251,7 +252,7 @@ function FocusCard({
           ) : (
             <div className="space-y-2">
               {/* Header row */}
-              <div className="hidden sm:grid sm:grid-cols-[1fr_repeat(4,80px)] gap-1 px-2 pb-1">
+              <div className="hidden sm:grid sm:grid-cols-[1fr_repeat(5,80px)] gap-1 px-2 pb-1">
                 <div className="text-xs text-theme-tertiary">Réponse</div>
                 {ALIGNMENTS.map((a) => (
                   <div key={a.value} className="text-xs text-theme-tertiary text-center">
@@ -268,7 +269,7 @@ function FocusCard({
                   <div
                     key={answer}
                     onClick={() => setActiveAnswerIndex(idx)}
-                    className={`grid grid-cols-1 sm:grid-cols-[1fr_repeat(4,80px)] gap-1 items-center px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+                    className={`grid grid-cols-1 sm:grid-cols-[1fr_repeat(5,80px)] gap-1 items-center px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
                       isActive
                         ? 'bg-dawta-50 ring-2 ring-dawta-300'
                         : currentAlignment
@@ -518,10 +519,11 @@ export default function LabelAnswers() {
         <div className="mb-4 p-3 bg-dawta-50 border border-dawta-200 rounded-lg text-sm space-y-1">
           <div className="font-medium text-dawta-700 mb-2">Raccourcis clavier</div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1 text-theme-primary">
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">1</kbd> Aligné</div>
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">2</kbd> Opposé</div>
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">3</kbd> Neutre</div>
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">4</kbd> Ne sait pas</div>
+            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">a</kbd> Aligné</div>
+            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">z</kbd> Opposé</div>
+            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">e</kbd> Neutre</div>
+            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">r</kbd> Non relié</div>
+            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">t</kbd> Ne sait pas</div>
             <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">&uarr;&darr;</kbd> Naviguer réponses</div>
             <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">&larr;&rarr;</kbd> Paire préc./suiv.</div>
             <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">Enter</kbd> Sauvegarder</div>

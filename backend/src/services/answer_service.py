@@ -5,14 +5,9 @@ import io
 from urllib.request import urlopen
 
 from loguru import logger
-
 from src.supabase_client import get_supabase
 
-ANSWERS_CSV_URL = (
-    "https://raw.githubusercontent.com/dawtasso/eu_survey_correlation/"
-    "e8c8a0674a9e2d88315f6d9482002626862d9ff9/data/surveys/"
-    "volume_b_answer_distributions.csv"
-)
+ANSWERS_CSV_URL = "https://raw.githubusercontent.com/dawtasso/eu_survey_correlation/refs/heads/main/data/surveys/volume_b_answer_distributions.csv"
 
 # Cache: question_id (sheet_id) -> list of answer labels
 _answers_cache: dict[str, list[str]] | None = None
@@ -106,9 +101,7 @@ class AnswerService:
             return {}
 
     @classmethod
-    def save_alignments(
-        cls, match_id: str, alignments: list[dict[str, str]]
-    ) -> bool:
+    def save_alignments(cls, match_id: str, alignments: list[dict[str, str]]) -> bool:
         """Save or update answer alignments for a match.
 
         alignments: list of {answer_label, alignment}
@@ -149,13 +142,9 @@ class AnswerService:
 
             # Count distinct match_ids in alignments table
             alignments_resp = (
-                supabase.table("survey_answer_alignments")
-                .select("match_id")
-                .execute()
+                supabase.table("survey_answer_alignments").select("match_id").execute()
             )
-            labelled_match_ids = set(
-                row["match_id"] for row in alignments_resp.data
-            )
+            labelled_match_ids = set(row["match_id"] for row in alignments_resp.data)
 
             return {
                 "totalAccepted": total_accepted,

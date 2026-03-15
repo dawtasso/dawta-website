@@ -161,7 +161,7 @@ export interface MatchWithAnswers {
   alignments: Record<string, string>; // answer_label -> alignment
 }
 
-export type Alignment = 'aligned' | 'opposed' | 'neutral' | 'unknown';
+export type Alignment = 'aligned' | 'opposed' | 'neutral' | 'unknown' | 'unrelated';
 
 export async function fetchAcceptedMatchesWithAnswers(): Promise<MatchWithAnswers[]> {
   const response = await fetch(`${API_BASE_URL}/api/judgments/answers/matches`);
