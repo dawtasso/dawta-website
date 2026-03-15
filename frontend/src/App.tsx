@@ -7,6 +7,7 @@ import About from './pages/About';
 import ProjectDetail from './pages/ProjectDetail';
 import JudgeSurveyVote from './pages/JudgeSurveyVote';
 import LabelAnswers from './pages/LabelAnswers';
+import DemographicAlignment from './pages/DemographicAlignment';
 import { SecretModeProvider } from './contexts/SecretModeContext';
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ function App() {
               <Route path="projects/:projectId" element={<ProjectDetail />} />
               <Route path="projects/ue-pair-correlation/judge" element={<JudgeSurveyVote />} />
               <Route path="projects/ue-pair-correlation/label-answers" element={<LabelAnswers />} />
+              <Route path="projects/ue-pair-correlation/demographic-alignment" element={<DemographicAlignment />} />
               <Route path="about" element={<About />} />
             </Route>
           </Routes>

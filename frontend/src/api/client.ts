@@ -196,3 +196,91 @@ export async function fetchLabellingStats(): Promise<{
   }
   return response.json();
 }
+
+// ─── Demographic alignment correlation types & API ───
+
+export interface DemographicAlignmentSummary {
+  totalQuestions: number;
+  totalAlignments: number;
+}
+
+export interface DemographicGroupScore {
+  demographicType: string;
+  demographicValue: string;
+  alignmentRate: number | null;
+  netAlignmentScore: number | null;
+  countAligned: number;
+  countOpposed: number;
+  countNeutral: number;
+  questionCount: number;
+}
+
+export interface QuestionDemographicBreakdown {
+  demographicType: string;
+  demographicValue: string;
+  alignmentRate: number | null;
+  netAlignmentScore: number | null;
+  countAligned: number;
+  countOpposed: number;
+  countNeutral: number;
+}
+
+export interface AnswerDemographicCount {
+  demographicType: string;
+  demographicValue: string;
+  count: number;
+  totalBase: number;
+  pct: number;
+}
+
+export interface AnswerAlignmentInfo {
+  answerLabel: string;
+  alignment: string;
+  demographics: AnswerDemographicCount[];
+}
+
+export interface QuestionAlignmentDetail {
+  questionId: string;
+  questionClean: string;
+  surveyFile: string;
+  voteId: number | null;
+  voteSummaryClean: string;
+  answers: AnswerAlignmentInfo[];
+  demographics: QuestionDemographicBreakdown[];
+}
+
+export interface PairwiseZTest {
+  group1: string;
+  group2: string;
+  rate1: number;
+  rate2: number;
+  zStat: number;
+  pValue: number;
+  significant: boolean;
+}
+
+export interface DemographicStatistic {
+  chiSquared: number;
+  pValue: number;
+  cramersV: number;
+  significant: boolean;
+  pairwise: PairwiseZTest[];
+}
+
+export interface DemographicAlignmentResponse {
+  summary: DemographicAlignmentSummary;
+  byDemographic: DemographicGroupScore[];
+  byQuestion: QuestionAlignmentDetail[];
+  statistics: Record<string, DemographicStatistic>;
+}
+
+export async function fetchDemographicAlignment(
+  demographicType?: string,
+): Promise<DemographicAlignmentResponse> {
+  const params = demographicType ? `?demographic_type=${encodeURIComponent(demographicType)}` : '';
+  const response = await fetch(`${API_BASE_URL}/api/correlations/demographic-alignment${params}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch demographic alignment: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}

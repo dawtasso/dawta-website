@@ -99,3 +99,99 @@ class MatchWithAnswers(BaseModel):
     alignments: dict[str, str] = {}  # answer_label -> alignment
 
     model_config = {"populate_by_name": True}
+
+
+# ─── Correlation / Demographic alignment models ───
+
+
+class DemographicAlignmentSummary(BaseModel):
+    total_questions: int = Field(alias="totalQuestions")
+    total_alignments: int = Field(alias="totalAlignments")
+
+    model_config = {"populate_by_name": True}
+
+
+class DemographicGroupScore(BaseModel):
+    demographic_type: str = Field(alias="demographicType")
+    demographic_value: str = Field(alias="demographicValue")
+    alignment_rate: float | None = Field(None, alias="alignmentRate")
+    net_alignment_score: float | None = Field(None, alias="netAlignmentScore")
+    count_aligned: int = Field(0, alias="countAligned")
+    count_opposed: int = Field(0, alias="countOpposed")
+    count_neutral: int = Field(0, alias="countNeutral")
+    question_count: int = Field(0, alias="questionCount")
+
+    model_config = {"populate_by_name": True}
+
+
+class QuestionDemographicBreakdown(BaseModel):
+    demographic_type: str = Field(alias="demographicType")
+    demographic_value: str = Field(alias="demographicValue")
+    alignment_rate: float | None = Field(None, alias="alignmentRate")
+    net_alignment_score: float | None = Field(None, alias="netAlignmentScore")
+    count_aligned: int = Field(0, alias="countAligned")
+    count_opposed: int = Field(0, alias="countOpposed")
+    count_neutral: int = Field(0, alias="countNeutral")
+
+    model_config = {"populate_by_name": True}
+
+
+class AnswerDemographicCount(BaseModel):
+    demographic_type: str = Field(alias="demographicType")
+    demographic_value: str = Field(alias="demographicValue")
+    count: int = 0
+    total_base: int = Field(0, alias="totalBase")
+    pct: float = 0
+
+    model_config = {"populate_by_name": True}
+
+
+class AnswerAlignmentInfo(BaseModel):
+    answer_label: str = Field(alias="answerLabel")
+    alignment: str  # aligned, opposed, neutral, unknown, unrelated
+    demographics: list[AnswerDemographicCount] = []
+
+    model_config = {"populate_by_name": True}
+
+
+class QuestionAlignmentDetail(BaseModel):
+    question_id: str = Field(alias="questionId")
+    question_clean: str = Field("", alias="questionClean")
+    survey_file: str = Field("", alias="surveyFile")
+    vote_id: int | None = Field(None, alias="voteId")
+    vote_summary_clean: str = Field("", alias="voteSummaryClean")
+    answers: list[AnswerAlignmentInfo] = []
+    demographics: list[QuestionDemographicBreakdown] = []
+
+    model_config = {"populate_by_name": True}
+
+
+class PairwiseZTest(BaseModel):
+    group1: str
+    group2: str
+    rate1: float
+    rate2: float
+    z_stat: float = Field(alias="zStat")
+    p_value: float = Field(alias="pValue")
+    significant: bool
+
+    model_config = {"populate_by_name": True}
+
+
+class DemographicStatistic(BaseModel):
+    chi_squared: float = Field(alias="chiSquared")
+    p_value: float = Field(alias="pValue")
+    cramers_v: float = Field(alias="cramersV")
+    significant: bool
+    pairwise: list[PairwiseZTest] = []
+
+    model_config = {"populate_by_name": True}
+
+
+class DemographicAlignmentResponse(BaseModel):
+    summary: DemographicAlignmentSummary
+    by_demographic: list[DemographicGroupScore] = Field(alias="byDemographic")
+    by_question: list[QuestionAlignmentDetail] = Field(alias="byQuestion")
+    statistics: dict[str, DemographicStatistic] = {}
+
+    model_config = {"populate_by_name": True}
