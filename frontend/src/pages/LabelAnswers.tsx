@@ -4,8 +4,6 @@ import {
   ArrowRight,
   ArrowLeft,
   Check,
-  ChevronDown,
-  ChevronRight,
   Search,
   Keyboard,
 } from 'lucide-react';
@@ -128,14 +126,10 @@ function FocusCard({
   currentIndex: number;
   totalCount: number;
 }) {
-  const [localAlignments, setLocalAlignments] = useState<Record<string, Alignment>>({});
+  const [localAlignments, setLocalAlignments] = useState<Record<string, Alignment>>(
+    () => ({ ...item.alignments } as Record<string, Alignment>),
+  );
   const [activeAnswerIndex, setActiveAnswerIndex] = useState(0);
-
-  // Reset local state when item changes
-  useEffect(() => {
-    setLocalAlignments({ ...item.alignments } as Record<string, Alignment>);
-    setActiveAnswerIndex(0);
-  }, [item.match.matchId, item.alignments]);
 
   const answers = item.answers;
   const allLabelled = answers.length > 0 && answers.every((a) => localAlignments[a]);
@@ -464,14 +458,8 @@ export default function LabelAnswers() {
     return result;
   }, [matchesWithAnswers, statusFilter, searchQuery]);
 
-  // Clamp selected index
-  useEffect(() => {
-    if (selectedIndex >= filtered.length) {
-      setSelectedIndex(Math.max(0, filtered.length - 1));
-    }
-  }, [filtered.length, selectedIndex]);
-
-  const currentItem = filtered[selectedIndex];
+  const effectiveIndex = filtered.length === 0 ? 0 : Math.min(selectedIndex, filtered.length - 1);
+  const currentItem = filtered[effectiveIndex];
 
   const handleNext = useCallback(() => {
     setSelectedIndex((i) => Math.min(filtered.length - 1, i + 1));
@@ -552,7 +540,7 @@ export default function LabelAnswers() {
               <MatchListItem
                 key={item.match.matchId}
                 item={item}
-                isSelected={idx === selectedIndex}
+                isSelected={idx === effectiveIndex}
                 onClick={() => setSelectedIndex(idx)}
               />
             ))}
@@ -562,12 +550,13 @@ export default function LabelAnswers() {
           <div className="lg:sticky lg:top-4 lg:self-start">
             {currentItem && (
               <FocusCard
+                key={currentItem.match.matchId}
                 item={currentItem}
                 onSave={handleSave}
                 isSaving={saveMutation.isPending}
                 onNext={handleNext}
                 onPrev={handlePrev}
-                currentIndex={selectedIndex}
+                currentIndex={effectiveIndex}
                 totalCount={filtered.length}
               />
             )}
