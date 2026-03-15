@@ -71,15 +71,16 @@ async def get_accepted_matches_with_answers():
     if not matches:
         return []
 
-    question_ids = list({m.question_id for m in matches if m.question_id})
+    answer_keys = list({(m.question_id, m.survey_file or "") for m in matches if m.question_id})
     match_ids = [m.match_id for m in matches]
 
-    answers_map = AnswerService.get_answers_bulk(question_ids)
+    answers_map = AnswerService.get_answers_bulk(answer_keys)
     alignments_map = AnswerService.get_alignments_bulk(match_ids)
 
     result = []
     for m in matches:
-        answers = answers_map.get(m.question_id, []) if m.question_id else []
+        key = (m.question_id, m.survey_file or "") if m.question_id else None
+        answers = answers_map.get(key, []) if key else []
         alignments = alignments_map.get(m.match_id, {})
         result.append(
             MatchWithAnswers(match=m, answers=answers, alignments=alignments)

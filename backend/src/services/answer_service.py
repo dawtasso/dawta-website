@@ -9,12 +9,12 @@ from src.supabase_client import get_supabase
 
 ANSWERS_CSV_URL = "https://raw.githubusercontent.com/dawtasso/eu_survey_correlation/refs/heads/main/data/surveys/volume_b_answer_distributions.csv"
 
-# Cache: question_id (sheet_id) -> list of answer labels
-_answers_cache: dict[str, list[str]] | None = None
+# Cache: (sheet_id, file_name) -> list of answer labels
+_answers_cache: dict[tuple[str, str], list[str]] | None = None
 
 
-def _load_answers() -> dict[str, list[str]]:
-    """Load and cache answer labels from the CSV, grouped by sheet_id."""
+def _load_answers() -> dict[tuple[str, str], list[str]]:
+    """Load and cache answer labels from the CSV, grouped by (sheet_id, file_name)."""
     global _answers_cache
     if _answers_cache is not None:
         return _answers_cache
@@ -23,22 +23,24 @@ def _load_answers() -> dict[str, list[str]]:
     with urlopen(ANSWERS_CSV_URL) as resp:
         data = resp.read().decode("utf-8")
 
-    result: dict[str, list[str]] = {}
+    result: dict[tuple[str, str], list[str]] = {}
     reader = csv.DictReader(io.StringIO(data))
     for row in reader:
         sheet_id = row.get("sheet_id", "").strip()
+        file_name = row.get("file_name", "").strip()
         answer = row.get("answer_label", "").strip()
         is_summary = row.get("is_summary", "").strip().lower() == "true"
         demo_type = row.get("demographic_type", "").strip()
 
         # Only keep non-summary, total-level rows to get unique answer labels
-        if not sheet_id or not answer or is_summary or demo_type != "total":
+        if not sheet_id or not file_name or not answer or is_summary or demo_type != "total":
             continue
 
-        if sheet_id not in result:
-            result[sheet_id] = []
-        if answer not in result[sheet_id]:
-            result[sheet_id].append(answer)
+        key = (sheet_id, file_name)
+        if key not in result:
+            result[key] = []
+        if answer not in result[key]:
+            result[key].append(answer)
 
     _answers_cache = result
     logger.info(f"Loaded answers for {len(result)} questions")
@@ -49,16 +51,16 @@ class AnswerService:
     """Manages survey answer options and alignment labels."""
 
     @classmethod
-    def get_answers_for_question(cls, question_id: str) -> list[str]:
+    def get_answers_for_question(cls, question_id: str, survey_file: str) -> list[str]:
         """Return the list of possible answer labels for a question."""
         answers = _load_answers()
-        return answers.get(question_id, [])
+        return answers.get((question_id, survey_file), [])
 
     @classmethod
-    def get_answers_bulk(cls, question_ids: list[str]) -> dict[str, list[str]]:
-        """Return answers for multiple questions at once."""
+    def get_answers_bulk(cls, keys: list[tuple[str, str]]) -> dict[tuple[str, str], list[str]]:
+        """Return answers for multiple (question_id, survey_file) pairs at once."""
         answers = _load_answers()
-        return {qid: answers.get(qid, []) for qid in question_ids}
+        return {k: answers.get(k, []) for k in keys}
 
     @classmethod
     def get_alignments_for_match(cls, match_id: str) -> dict[str, str]:
@@ -108,11 +110,24 @@ class AnswerService:
         """
         try:
             supabase = get_supabase()
+
+            # Look up the match to get survey_file and vote_id
+            match_resp = (
+                supabase.table("survey_vote_matches")
+                .select("survey_file, vote_id")
+                .eq("match_id", match_id)
+                .limit(1)
+                .execute()
+            )
+            match_data = match_resp.data[0] if match_resp.data else {}
+
             rows = [
                 {
                     "match_id": match_id,
                     "answer_label": a["answer_label"],
                     "alignment": a["alignment"],
+                    "survey_file": match_data.get("survey_file"),
+                    "vote_id": match_data.get("vote_id"),
                 }
                 for a in alignments
             ]
