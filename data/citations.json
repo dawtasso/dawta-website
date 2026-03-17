@@ -1,8 +1,26 @@
 [
   {
-    "id": "example-media",
-    "name": "Nom du média",
+    "id": "lequipe",
+    "name": "L'Équipe",
     "logo": "data/logos/lequipe.png",
     "url": "https://www.lequipe.fr/Football/Article/Sur-une-saison-de-ligue-1-quels-sont-les-clubs-qui-polluent-le-plus/1652683"
+  },
+  {
+    "id": "letelegramme",
+    "name": "Le Télégramme",
+    "logo": "data/logos/letelegramme.webp",
+    "url": "https://www.letelegramme.fr/sports/football/stade-brestois/la-saison-derniere-le-stade-brestois-est-le-club-de-ligue-1-ayant-le-plus-pollue-par-ses-deplacements-6985783.php"
+  },
+  {
+    "id": "onefootball",
+    "name": "OneFootball",
+    "logo": "data/logos/onefootball.webp",
+    "url": "https://onefootball.com/fr/news/which-ligue-1-clubs-pollute-the-most-over-a-season-42420718"
+  },
+  {
+    "id": "teamfootball",
+    "name": "TeamFootball",
+    "logo": "data/logos/teamfootball.jpeg",
+    "url": "https://www.teamfootball.fr/championnats/ligue-1/stade-brestois-le-lourd-secret-ecologique-qui-pese-sur-la-ligue-1/"
   }
 ]
