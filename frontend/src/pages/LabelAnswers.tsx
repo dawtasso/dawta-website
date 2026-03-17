@@ -211,6 +211,11 @@ function FocusCard({
             <p className="text-theme-primary text-base leading-relaxed">
               {item.match.questionClean || item.match.questionOriginal || '—'}
             </p>
+            {item.match.questionOriginal && item.match.questionOriginal !== item.match.questionClean && (
+              <p className="text-theme-tertiary text-xs italic mt-0.5">
+                {item.match.questionOriginal}
+              </p>
+            )}
             {item.match.surveyFile && (
               <p className="text-xs text-theme-tertiary mt-1">
                 {item.match.surveyFile?.replace('.xlsx', '')}
@@ -228,6 +233,11 @@ function FocusCard({
             <p className="text-theme-primary text-base leading-relaxed">
               {item.match.voteSummaryClean || item.match.voteSummaryOriginal || '—'}
             </p>
+            {item.match.voteSummaryOriginal && item.match.voteSummaryOriginal !== item.match.voteSummaryClean && (
+              <p className="text-theme-tertiary text-xs italic mt-0.5">
+                {item.match.voteSummaryOriginal}
+              </p>
+            )}
             {item.match.voteDate && (
               <p className="text-xs text-theme-tertiary mt-1">
                 Vote : {item.match.voteDate}
@@ -369,9 +379,19 @@ function MatchListItem({
           <p className="text-sm font-medium text-theme-primary truncate">
             {item.match.questionClean || item.match.questionOriginal || '—'}
           </p>
+          {item.match.questionOriginal && item.match.questionOriginal !== item.match.questionClean && (
+            <p className="text-xs text-theme-tertiary truncate italic">
+              {item.match.questionOriginal}
+            </p>
+          )}
           <p className="text-xs text-theme-tertiary truncate mt-0.5">
             {item.match.voteSummaryClean || item.match.voteSummaryOriginal || '—'}
           </p>
+          {item.match.voteSummaryOriginal && item.match.voteSummaryOriginal !== item.match.voteSummaryClean && (
+            <p className="text-xs text-theme-tertiary truncate italic">
+              {item.match.voteSummaryOriginal}
+            </p>
+          )}
         </div>
         <div className="flex-shrink-0 text-right">
           {hasNoAnswers ? (
