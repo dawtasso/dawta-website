@@ -10,14 +10,14 @@ export default function PDFViewer({ url, title, className = '' }: PDFViewerProps
       {title && (
         <h3 className="text-xl font-semibold text-theme-primary mb-4">{title}</h3>
       )}
-      
+
       <div className="border border-theme-light rounded-lg overflow-hidden bg-theme-secondary">
-        <div 
-          className="w-full" 
-          style={{ 
-            height: '85vh', 
-            minHeight: '600px', 
-            maxHeight: '1200px' 
+        <div
+          className="w-full"
+          style={{
+            height: '85vh',
+            minHeight: '600px',
+            maxHeight: '1200px'
           }}
         >
           <iframe
@@ -34,7 +34,7 @@ export default function PDFViewer({ url, title, className = '' }: PDFViewerProps
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-dawta hover:text-dawta-700 underline"
+          className="text-mint hover:text-mint-300 underline"
         >
           Ouvrir dans un nouvel onglet
         </a>
@@ -42,4 +42,3 @@ export default function PDFViewer({ url, title, className = '' }: PDFViewerProps
     </div>
   );
 }
-

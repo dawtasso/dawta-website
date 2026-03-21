@@ -26,22 +26,22 @@ export default function Button({
   rel,
   ariaLabel,
 }: ButtonProps) {
-  const baseClasses = 'inline-flex items-center font-medium rounded-lg transition-all duration-200';
-  
+  const baseClasses = 'inline-flex items-center font-sans font-medium rounded transition-all duration-200';
+
   const variantClasses = {
-    primary: 'bg-bordeaux hover:bg-bordeaux-600 text-white shadow-sm hover:shadow-md font-semibold',
-    secondary: 'bg-bordeaux-700 hover:bg-bordeaux-800 text-white shadow-sm hover:shadow-md font-semibold',
-    ghost: 'text-theme-primary hover:text-bordeaux hover:bg-theme-secondary/50',
+    primary: 'bg-vermillion hover:bg-vermillion-500 text-white shadow-sm hover:shadow-md hover:shadow-vermillion/20 font-semibold',
+    secondary: 'bg-surface hover:bg-ink-50 text-[#F5F0EB] border border-border hover:border-vermillion/40 shadow-sm font-semibold',
+    ghost: 'text-[#A8A29E] hover:text-mint hover:bg-white/5',
   };
-  
+
   const sizeClasses = {
     sm: 'px-3 py-1.5 text-sm',
     md: 'px-4 py-2 text-sm',
     lg: 'px-5 py-2.5 text-base',
   };
-  
+
   const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim();
-  
+
   if (href) {
     return (
       <a
@@ -55,7 +55,7 @@ export default function Button({
       </a>
     );
   }
-  
+
   if (to) {
     return (
       <Link
@@ -67,7 +67,7 @@ export default function Button({
       </Link>
     );
   }
-  
+
   return (
     <button
       onClick={onClick}
@@ -78,4 +78,3 @@ export default function Button({
     </button>
   );
 }
-

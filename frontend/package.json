@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fontsource/inter": "^5.2.8",
+    "@fontsource-variable/newsreader": "^5.2.10",
+    "@fontsource/space-mono": "^5.2.9",
     "@nivo/bar": "^0.99.0",
     "@nivo/core": "^0.99.0",
     "@nivo/line": "^0.99.0",

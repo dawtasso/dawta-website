@@ -135,7 +135,7 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
           {/* Survey question */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <div className="text-xs font-semibold text-dawta-600 uppercase tracking-wide">
+              <div className="text-xs font-semibold text-[#A8A29E] uppercase tracking-wide">
                 Question de sondage
               </div>
               {match.source && (
@@ -162,7 +162,7 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
 
           {/* Vote */}
           <div>
-            <div className="text-xs font-semibold text-bordeaux uppercase tracking-wide mb-2">
+            <div className="text-xs font-semibold text-vermillion uppercase tracking-wide mb-2">
               Vote du Parlement Européen
             </div>
             <p className="text-theme-secondary text-sm leading-relaxed">
@@ -185,7 +185,7 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
               <div className="text-xs text-theme-tertiary w-28 flex-shrink-0">Similarité :</div>
               <div className="flex-1 h-2 bg-theme-tertiary/30 rounded-full overflow-hidden min-w-[100px]">
                 <div
-                  className="h-full bg-dawta-500 rounded-full transition-all duration-300"
+                  className="h-full bg-gold rounded-full transition-all duration-300"
                   style={{ width: `${similarityPercent}%` }}
                 />
               </div>

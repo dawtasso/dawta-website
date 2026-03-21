@@ -8,9 +8,9 @@ type TextProps = {
 };
 
 const variantClasses: Record<NonNullable<TextProps['variant']>, string> = {
-  body: 'text-gray-900',
-  muted: 'text-gray-600',
-  error: 'text-red-600',
+  body: 'text-[#F5F0EB]',
+  muted: 'text-[#A8A29E]',
+  error: 'text-vermillion',
 };
 
 const sizeClasses: Record<NonNullable<TextProps['size']>, string> = {
@@ -31,4 +31,3 @@ export default function Text({
     </p>
   );
 }
-

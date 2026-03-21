@@ -1,4 +1,8 @@
-@import '@fontsource/inter';
+@import '@fontsource-variable/newsreader';
+@import '@fontsource-variable/newsreader/wght-italic.css';
+@import '@fontsource/space-mono';
+@import '@fontsource/space-mono/400.css';
+@import '@fontsource/space-mono/700.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -22,31 +26,22 @@
 }
 
 :root {
-  /* 
-   * THEME COLORS - LIGHT MODE (white background, dark text)
-   * Logo grey (#535353) used only around logo for smooth transition
-   * 
-   * To switch to dark theme, swap these values:
-   *   --color-bg-primary: #1f1f1f;      (was #ffffff)
-   *   --color-bg-secondary: #2a2a2a;    (was #f5f5f5)
-   *   --color-text-primary: #ffffff;    (was #1a1a1a)
-   *   --color-text-secondary: #e8e8e8;   (was #535353)
-   */
-  --color-bg-primary: #ffffff;      /* Main background - white */
-  --color-bg-secondary: #f5f5f5;    /* Cards, sections - light grey */
-  --color-bg-tertiary: #e8e8e8;     /* Hover states - medium light grey */
-  --color-bg-logo: #535353;         /* Logo area - matches logo grey for smooth transition */
-  --color-text-primary: #1a1a1a;    /* Main text - dark */
-  --color-text-secondary: #535353;   /* Secondary text - grey */
-  --color-text-tertiary: #6d6d6d;    /* Muted text - medium grey */
-  --color-border: #d1d1d1;          /* Borders - light grey */
-  --color-border-light: #e8e8e8;    /* Light borders - very light grey */
-  --logo-url: url('/logo_bg_white.svg');  /* Logo for light background */
+  --color-bg-primary: #0F0F0F;
+  --color-bg-secondary: #1A1A1A;
+  --color-bg-tertiary: #2A2A2A;
+  --color-text-primary: #F5F0EB;
+  --color-text-secondary: #A8A29E;
+  --color-text-tertiary: #78716C;
+  --color-accent: #E85D3A;
+  --color-accent-secondary: #3ECFB4;
+  --color-accent-gold: #F2C94C;
+  --color-border: #2A2A2A;
+  --color-border-light: #333333;
 }
 
 @layer base {
   body {
-    @apply font-sans antialiased;
+    @apply font-serif antialiased;
     background-color: var(--color-bg-primary);
     color: var(--color-text-primary);
   }
@@ -56,62 +51,76 @@
   .bg-theme-primary {
     background-color: var(--color-bg-primary);
   }
-  
+
   .bg-theme-secondary {
     background-color: var(--color-bg-secondary);
   }
-  
+
   .bg-theme-tertiary {
     background-color: var(--color-bg-tertiary);
   }
-  
-  .bg-theme-logo {
-    background-color: var(--color-bg-logo);
-  }
-  
+
   .text-theme-primary {
     color: var(--color-text-primary);
   }
-  
+
   .text-theme-secondary {
     color: var(--color-text-secondary);
   }
-  
+
   .text-theme-tertiary {
     color: var(--color-text-tertiary);
   }
-  
+
   .border-theme {
     border-color: var(--color-border);
   }
-  
+
   .border-theme-light {
     border-color: var(--color-border-light);
   }
-  
+
   .font-mergila {
     font-family: 'Mergila', serif;
   }
 }
 
 @layer utilities {
+  /* Radial glow diffraction pattern — gold light emanating */
   .diffraction-pattern {
-    background-image: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 1px,
-      rgba(83, 83, 83, 0.02) 1px,
-      rgba(83, 83, 83, 0.02) 2px
-    );
+    background-image:
+      radial-gradient(ellipse 600px 400px at 85% 20%, rgba(242, 201, 76, 0.03) 0%, rgba(242, 201, 76, 0.02) 30%, transparent 31%, transparent 33%, rgba(242, 201, 76, 0.015) 33.5%, transparent 34%, transparent 50%, rgba(242, 201, 76, 0.01) 50.5%, transparent 51%, transparent 70%, rgba(242, 201, 76, 0.008) 70.5%, transparent 71%, transparent 100%);
   }
-  
-  .diffraction-pattern-vertical {
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 1px,
-      rgba(83, 83, 83, 0.02) 1px,
-      rgba(83, 83, 83, 0.02) 2px
-    );
+
+  /* Subtle grain texture overlay for dark backgrounds */
+  .paper-grain {
+    position: relative;
+  }
+  .paper-grain::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  /* Arc divider — gold concentric arc */
+  .arc-divider {
+    position: relative;
+  }
+  .arc-divider::before {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 60px;
+    margin: 0 auto 2rem;
+    border: 2px solid var(--color-accent-gold);
+    border-bottom: none;
+    border-radius: 120px 120px 0 0;
+    opacity: 0.3;
   }
 }

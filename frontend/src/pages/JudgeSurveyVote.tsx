@@ -61,8 +61,8 @@ function ChipGroup({
           onClick={() => onChange(opt.value)}
           className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-colors ${
             value === opt.value
-              ? 'bg-dawta-600 text-white shadow-sm'
-              : 'bg-theme-secondary text-theme-tertiary hover:bg-dawta-100 hover:text-dawta-700'
+              ? 'bg-vermillion text-white shadow-sm'
+              : 'bg-theme-secondary text-theme-tertiary hover:bg-ink-50 hover:text-[#F5F0EB]'
           }`}
         >
           {opt.label}
@@ -93,18 +93,18 @@ function StatsBar({ stats }: { stats: ValidationStats }) {
           <div className="text-lg font-bold text-theme-primary">{stats.pending}</div>
           <div className="text-xs text-theme-tertiary">En attente</div>
         </div>
-        <div className="p-2 bg-dawta-50 rounded-lg text-center border border-dawta-100">
-          <div className="text-lg font-bold text-dawta-600">{stats.total}</div>
-          <div className="text-xs text-dawta-600/70">Total</div>
+        <div className="p-2 bg-surface rounded-lg text-center border border-border">
+          <div className="text-lg font-bold text-[#A8A29E]">{stats.total}</div>
+          <div className="text-xs text-[#A8A29E]/70">Total</div>
         </div>
       </div>
 
       <div className="max-w-md mx-auto">
-        <div className="flex justify-between text-xs text-dawta-600 mb-1">
+        <div className="flex justify-between text-xs text-[#A8A29E] mb-1">
           <span>{stats.accepted + stats.refused} validées</span>
           <span>{pctComplete.toFixed(1)}%</span>
         </div>
-        <div className="h-2 bg-dawta-200 rounded-full overflow-hidden">
+        <div className="h-2 bg-ink-50 rounded-full overflow-hidden">
           <div className="h-full rounded-full transition-all duration-500 flex">
             <div
               className="h-full bg-green-500 transition-all duration-500"
@@ -226,7 +226,7 @@ function MatchRow({
         <div className="hidden sm:flex items-center gap-2 w-32 flex-shrink-0">
           <div className="flex-1 h-1.5 bg-theme-tertiary/20 rounded-full overflow-hidden">
             <div
-              className="h-full bg-dawta-500 rounded-full"
+              className="h-full bg-gold rounded-full"
               style={{ width: `${similarityPercent}%` }}
             />
           </div>
@@ -293,7 +293,7 @@ function MatchRow({
       {isExpanded && (
         <div className="px-4 pb-3 pt-1 border-t border-theme-light/50 space-y-3 text-sm">
           <div>
-            <div className="text-xs font-semibold text-dawta-600 uppercase tracking-wide mb-1">
+            <div className="text-xs font-semibold text-[#A8A29E] uppercase tracking-wide mb-1">
               Question de sondage
             </div>
             <p className="text-theme-primary">{match.questionClean}</p>
@@ -308,7 +308,7 @@ function MatchRow({
           </div>
 
           <div>
-            <div className="text-xs font-semibold text-bordeaux uppercase tracking-wide mb-1">
+            <div className="text-xs font-semibold text-vermillion uppercase tracking-wide mb-1">
               Vote du Parlement Européen
             </div>
             <p className="text-theme-primary">{match.voteSummaryClean}</p>
@@ -333,7 +333,7 @@ function MatchRow({
               <span className="text-xs text-theme-tertiary w-24">Similarité :</span>
               <div className="flex-1 h-2 bg-theme-tertiary/20 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-dawta-500 rounded-full"
+                  className="h-full bg-gold rounded-full"
                   style={{ width: `${similarityPercent}%` }}
                 />
               </div>
@@ -586,7 +586,7 @@ export default function JudgeSurveyVote() {
       <div className="mb-4">
         <Link
           to="/projects/ue-pair-correlation/label-answers"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-dawta-600 text-white hover:bg-dawta-700 transition-colors shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-vermillion text-white hover:bg-vermillion-600 transition-colors shadow-sm"
         >
           <Tags className="w-4 h-4" />
           Labeliser les réponses des paires acceptées
@@ -603,7 +603,7 @@ export default function JudgeSurveyVote() {
             onClick={() => setGroupBy('question')}
             className={`px-3 py-1.5 text-sm rounded-md font-medium transition-colors ${
               groupBy === 'question'
-                ? 'bg-dawta-600 text-white shadow-sm'
+                ? 'bg-vermillion text-white shadow-sm'
                 : 'text-theme-tertiary hover:text-theme-primary'
             }`}
           >
@@ -616,7 +616,7 @@ export default function JudgeSurveyVote() {
             }}
             className={`px-3 py-1.5 text-sm rounded-md font-medium transition-colors ${
               groupBy === 'vote'
-                ? 'bg-dawta-600 text-white shadow-sm'
+                ? 'bg-vermillion text-white shadow-sm'
                 : 'text-theme-tertiary hover:text-theme-primary'
             }`}
           >
@@ -635,7 +635,7 @@ export default function JudgeSurveyVote() {
             placeholder="Rechercher question ou vote..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-sm rounded-lg border border-theme-light bg-theme-secondary text-theme-primary placeholder:text-theme-tertiary focus:outline-none focus:ring-2 focus:ring-dawta-400"
+            className="w-full pl-9 pr-3 py-1.5 text-sm rounded-lg border border-theme-light bg-theme-secondary text-theme-primary placeholder:text-theme-tertiary focus:outline-none focus:ring-2 focus:ring-vermillion/40"
           />
         </div>
       </div>

@@ -63,8 +63,8 @@ function ChipGroup({
           onClick={() => onChange(opt.value)}
           className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-colors ${
             value === opt.value
-              ? 'bg-dawta-600 text-white shadow-sm'
-              : 'bg-theme-secondary text-theme-tertiary hover:bg-dawta-100 hover:text-dawta-700'
+              ? 'bg-vermillion text-white shadow-sm'
+              : 'bg-theme-secondary text-theme-tertiary hover:bg-ink-50 hover:text-[#F5F0EB]'
           }`}
         >
           {opt.label}
@@ -80,23 +80,23 @@ function MethodologyBlock() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="mb-8 border border-dawta-200 rounded-xl bg-dawta-50/50 overflow-hidden">
+    <div className="mb-8 border border-border rounded-xl bg-surface/50 overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-2 px-4 py-3 text-left hover:bg-dawta-50 transition-colors"
+        className="w-full flex items-center gap-2 px-4 py-3 text-left hover:bg-surface transition-colors"
       >
-        <Info className="w-4 h-4 text-dawta-600 flex-shrink-0" />
-        <span className="text-sm font-medium text-dawta-700">Comprendre les indicateurs</span>
+        <Info className="w-4 h-4 text-[#A8A29E] flex-shrink-0" />
+        <span className="text-sm font-medium text-[#F5F0EB]">Comprendre les indicateurs</span>
         {open ? (
-          <ChevronDown className="w-4 h-4 text-dawta-500 ml-auto" />
+          <ChevronDown className="w-4 h-4 text-[#78716C] ml-auto" />
         ) : (
-          <ChevronRight className="w-4 h-4 text-dawta-500 ml-auto" />
+          <ChevronRight className="w-4 h-4 text-[#78716C] ml-auto" />
         )}
       </button>
       {open && (
         <div className="px-4 pb-4 text-sm text-theme-primary space-y-3">
           <div>
-            <p className="font-medium text-dawta-700 mb-1">Principe</p>
+            <p className="font-medium text-[#F5F0EB] mb-1">Principe</p>
             <p className="text-theme-tertiary leading-relaxed">
               Pour chaque question de sondage Eurobarometre, nous avons un vote correspondant du Parlement europeen.
               Chaque reponse au sondage a ete manuellement etiquetee comme <strong>alignee</strong> (va dans le sens du vote),
@@ -106,19 +106,19 @@ function MethodologyBlock() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="p-3 bg-white rounded-lg border border-dawta-100">
-              <p className="font-medium text-dawta-700 mb-1">Taux d'alignement</p>
+            <div className="p-3 bg-surface rounded-lg border border-border">
+              <p className="font-medium text-[#F5F0EB] mb-1">Taux d'alignement</p>
               <p className="text-theme-tertiary text-xs leading-relaxed">
-                <code className="bg-dawta-100 px-1 rounded text-dawta-800">alignes / (alignes + opposes)</code>
+                <code className="bg-ink-50 px-1 rounded text-[#F5F0EB]">alignes / (alignes + opposes)</code>
                 {' '} — Proportion des repondants (hors neutres) dont la reponse est alignee avec le vote du Parlement.
                 Un taux de 50% signifie que le groupe est aussi souvent pour que contre ; au-dessus de 50%, le groupe
                 tend a etre en accord avec le Parlement.
               </p>
             </div>
-            <div className="p-3 bg-white rounded-lg border border-dawta-100">
-              <p className="font-medium text-dawta-700 mb-1">Score net d'alignement</p>
+            <div className="p-3 bg-surface rounded-lg border border-border">
+              <p className="font-medium text-[#F5F0EB] mb-1">Score net d'alignement</p>
               <p className="text-theme-tertiary text-xs leading-relaxed">
-                <code className="bg-dawta-100 px-1 rounded text-dawta-800">(alignes - opposes) / total</code>
+                <code className="bg-ink-50 px-1 rounded text-[#F5F0EB]">(alignes - opposes) / total</code>
                 {' '} — Ecart net entre repondants alignes et opposes, rapporte a l'ensemble des repondants
                 (neutres inclus). Un score positif signifie que davantage de personnes dans le groupe partagent
                 la position du Parlement ; negatif, c'est l'inverse. Ce score penalise les groupes avec
@@ -150,9 +150,9 @@ function SummaryCards({
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-      <div className="p-4 bg-dawta-50 rounded-xl border border-dawta-100 text-center">
-        <div className="text-2xl font-bold text-dawta-700">{data.summary.totalQuestions}</div>
-        <div className="text-xs text-dawta-600/70 mt-1">Questions analysées</div>
+      <div className="p-4 bg-surface rounded-xl border border-border text-center">
+        <div className="text-2xl font-bold text-[#F5F0EB]">{data.summary.totalQuestions}</div>
+        <div className="text-xs text-[#A8A29E]/70 mt-1">Questions analysées</div>
       </div>
       <div className="p-4 bg-theme-secondary rounded-xl text-center">
         <div className="text-2xl font-bold text-theme-primary">{data.summary.totalAlignments}</div>

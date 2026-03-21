@@ -10,10 +10,10 @@ export default function NavLink({ to, label, isActive }: NavLinkProps) {
   return (
     <Link
       to={to}
-      className={`py-4 text-sm font-medium border-b-2 transition-colors ${
+      className={`py-3 text-sm font-sans font-medium uppercase tracking-widest transition-colors duration-200 ${
         isActive
-          ? 'border-dawta text-dawta-950'
-          : 'border-transparent text-dawta-600 hover:text-dawta-950'
+          ? 'text-vermillion'
+          : 'text-[#A8A29E] hover:text-[#F5F0EB]'
       }`}
     >
       {label}

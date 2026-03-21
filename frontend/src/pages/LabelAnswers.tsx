@@ -49,17 +49,17 @@ function LabellingStatsBar({ stats }: { stats: { totalAccepted: number; labelled
           <div className="text-lg font-bold text-theme-primary">{stats.remaining}</div>
           <div className="text-xs text-theme-tertiary">Restantes</div>
         </div>
-        <div className="p-2 bg-dawta-50 rounded-lg text-center border border-dawta-100">
-          <div className="text-lg font-bold text-dawta-600">{stats.totalAccepted}</div>
-          <div className="text-xs text-dawta-600/70">Total acceptées</div>
+        <div className="p-2 bg-surface rounded-lg text-center border border-border">
+          <div className="text-lg font-bold text-[#A8A29E]">{stats.totalAccepted}</div>
+          <div className="text-xs text-[#A8A29E]/70">Total acceptées</div>
         </div>
       </div>
       <div className="max-w-md mx-auto">
-        <div className="flex justify-between text-xs text-dawta-600 mb-1">
+        <div className="flex justify-between text-xs text-[#A8A29E] mb-1">
           <span>{stats.labelled} labelisées</span>
           <span>{pct.toFixed(1)}%</span>
         </div>
-        <div className="h-2 bg-dawta-200 rounded-full overflow-hidden">
+        <div className="h-2 bg-ink-50 rounded-full overflow-hidden">
           <div
             className="h-full bg-green-500 rounded-full transition-all duration-500"
             style={{ width: `${pct}%` }}
@@ -96,8 +96,8 @@ function ChipGroup({
           onClick={() => onChange(opt.value)}
           className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-colors ${
             value === opt.value
-              ? 'bg-dawta-600 text-white shadow-sm'
-              : 'bg-theme-secondary text-theme-tertiary hover:bg-dawta-100 hover:text-dawta-700'
+              ? 'bg-vermillion text-white shadow-sm'
+              : 'bg-theme-secondary text-theme-tertiary hover:bg-ink-50 hover:text-[#F5F0EB]'
           }`}
         >
           {opt.label}
@@ -184,7 +184,7 @@ function FocusCard({
         <button
           onClick={onPrev}
           disabled={currentIndex === 0}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg bg-theme-secondary text-theme-tertiary hover:bg-dawta-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg bg-theme-secondary text-theme-tertiary hover:bg-ink-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Préc.
         </button>
@@ -194,7 +194,7 @@ function FocusCard({
         <button
           onClick={onNext}
           disabled={currentIndex === totalCount - 1}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg bg-theme-secondary text-theme-tertiary hover:bg-dawta-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg bg-theme-secondary text-theme-tertiary hover:bg-ink-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           Suiv. <ArrowRight className="w-4 h-4" />
         </button>
@@ -205,7 +205,7 @@ function FocusCard({
         {/* Question & Vote context */}
         <div className="p-5 space-y-4 border-b border-theme-light">
           <div>
-            <div className="text-xs font-semibold text-dawta-600 uppercase tracking-wide mb-1.5">
+            <div className="text-xs font-semibold text-[#A8A29E] uppercase tracking-wide mb-1.5">
               Question de sondage
             </div>
             <p className="text-theme-primary text-base leading-relaxed">
@@ -220,14 +220,14 @@ function FocusCard({
               <p className="text-xs text-theme-tertiary mt-1">
                 {item.match.surveyFile?.replace('.xlsx', '')}
                 {item.match.questionId && (
-                  <span className="ml-2 font-mono text-dawta-500">#{item.match.questionId}</span>
+                  <span className="ml-2 font-mono text-[#78716C]">#{item.match.questionId}</span>
                 )}
                 {item.match.surveyDate && ` — ${item.match.surveyDate}`}
               </p>
             )}
           </div>
           <div>
-            <div className="text-xs font-semibold text-bordeaux uppercase tracking-wide mb-1.5">
+            <div className="text-xs font-semibold text-vermillion uppercase tracking-wide mb-1.5">
               Vote du Parlement Européen
             </div>
             <p className="text-theme-primary text-base leading-relaxed">
@@ -278,7 +278,7 @@ function FocusCard({
                     onClick={() => setActiveAnswerIndex(idx)}
                     className={`grid grid-cols-1 sm:grid-cols-[1fr_repeat(5,80px)] gap-1 items-center px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-dawta-50 ring-2 ring-dawta-300'
+                        ? 'bg-surface ring-2 ring-vermillion/30'
                         : currentAlignment
                         ? 'bg-green-50/50'
                         : 'bg-theme-secondary hover:bg-theme-secondary/80'
@@ -333,7 +333,7 @@ function FocusCard({
             disabled={!hasChanges || isSaving}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               hasChanges && !isSaving
-                ? 'bg-dawta-600 text-white hover:bg-dawta-700 shadow-sm'
+                ? 'bg-vermillion text-white hover:bg-vermillion-600 shadow-sm'
                 : 'bg-theme-secondary text-theme-tertiary cursor-not-allowed'
             }`}
           >
@@ -366,7 +366,7 @@ function MatchListItem({
       onClick={onClick}
       className={`w-full text-left px-4 py-3 rounded-lg border transition-all ${
         isSelected
-          ? 'border-dawta-400 bg-dawta-50 ring-2 ring-dawta-200'
+          ? 'border-vermillion/40 bg-surface ring-2 ring-vermillion/20'
           : isComplete
           ? 'border-green-200 bg-green-50/30 hover:bg-green-50/60'
           : hasNoAnswers
@@ -511,13 +511,13 @@ export default function LabelAnswers() {
             placeholder="Rechercher question ou vote..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-sm rounded-lg border border-theme-light bg-theme-secondary text-theme-primary placeholder:text-theme-tertiary focus:outline-none focus:ring-2 focus:ring-dawta-400"
+            className="w-full pl-9 pr-3 py-1.5 text-sm rounded-lg border border-theme-light bg-theme-secondary text-theme-primary placeholder:text-theme-tertiary focus:outline-none focus:ring-2 focus:ring-vermillion/40"
           />
         </div>
         <button
           onClick={() => setShowShortcuts(!showShortcuts)}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-colors ${
-            showShortcuts ? 'bg-dawta-600 text-white' : 'bg-theme-secondary text-theme-tertiary hover:bg-dawta-100'
+            showShortcuts ? 'bg-vermillion text-white' : 'bg-theme-secondary text-theme-tertiary hover:bg-ink-50'
           }`}
         >
           <Keyboard className="w-4 h-4" />
@@ -527,17 +527,17 @@ export default function LabelAnswers() {
 
       {/* Keyboard shortcuts help */}
       {showShortcuts && (
-        <div className="mb-4 p-3 bg-dawta-50 border border-dawta-200 rounded-lg text-sm space-y-1">
-          <div className="font-medium text-dawta-700 mb-2">Raccourcis clavier</div>
+        <div className="mb-4 p-3 bg-surface border border-border rounded-lg text-sm space-y-1">
+          <div className="font-medium text-[#F5F0EB] mb-2">Raccourcis clavier</div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1 text-theme-primary">
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">a</kbd> Aligné</div>
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">z</kbd> Opposé</div>
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">e</kbd> Neutre</div>
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">r</kbd> Non relié</div>
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">t</kbd> Ne sait pas</div>
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">&uarr;&darr;</kbd> Naviguer réponses</div>
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">&larr;&rarr;</kbd> Paire préc./suiv.</div>
-            <div><kbd className="px-1.5 py-0.5 bg-white rounded border text-xs font-mono">Enter</kbd> Sauvegarder</div>
+            <div><kbd className="px-1.5 py-0.5 bg-surface rounded border text-xs font-mono">a</kbd> Aligné</div>
+            <div><kbd className="px-1.5 py-0.5 bg-surface rounded border text-xs font-mono">z</kbd> Opposé</div>
+            <div><kbd className="px-1.5 py-0.5 bg-surface rounded border text-xs font-mono">e</kbd> Neutre</div>
+            <div><kbd className="px-1.5 py-0.5 bg-surface rounded border text-xs font-mono">r</kbd> Non relié</div>
+            <div><kbd className="px-1.5 py-0.5 bg-surface rounded border text-xs font-mono">t</kbd> Ne sait pas</div>
+            <div><kbd className="px-1.5 py-0.5 bg-surface rounded border text-xs font-mono">&uarr;&darr;</kbd> Naviguer réponses</div>
+            <div><kbd className="px-1.5 py-0.5 bg-surface rounded border text-xs font-mono">&larr;&rarr;</kbd> Paire préc./suiv.</div>
+            <div><kbd className="px-1.5 py-0.5 bg-surface rounded border text-xs font-mono">Enter</kbd> Sauvegarder</div>
           </div>
         </div>
       )}
