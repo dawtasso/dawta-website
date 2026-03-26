@@ -20,6 +20,17 @@
     "publishedAt": "2026-02-22",
     "hasJudgeFeature": true,
     "hidden": true
+  },
+  {
+    "id": "tier-payan",
+    "title": "Proposition de loi Payan — Application symétrique",
+    "githubUrl": "https://github.com/dawtasso/tier-payan",
+    "description": "Application hypothétique de la proposition de loi n°575 (« Payan ») au cas Israël-Palestine. Analyse symétrique des 4 articles avec identification des responsables israéliens et français potentiellement visés.",
+    "longDescription": null,
+    "status": "published",
+    "publishedAt": "2026-03-26",
+    "hasSlide": false,
+    "hasReport": false
   }
 ]
 
