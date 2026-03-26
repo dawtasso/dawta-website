@@ -194,6 +194,26 @@ export default function SwipeCard({ match, onJudge, isSubmitting }: SwipeCardPro
               </div>
             </div>
 
+            {/* Model predicted probability */}
+            {match.predictedProbability != null && (() => {
+              const modelPct = Math.round((match.predictedProbability ?? 0) * 100);
+              const isHigh = (match.predictedProbability ?? 0) >= 0.5;
+              return (
+                <div className="flex items-center gap-2">
+                  <div className="text-xs text-theme-tertiary w-28 flex-shrink-0">Modèle :</div>
+                  <div className="flex-1 h-2 bg-theme-tertiary/30 rounded-full overflow-hidden min-w-[100px]">
+                    <div
+                      className={`h-full rounded-full transition-all duration-300 ${isHigh ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                      style={{ width: `${modelPct}%` }}
+                    />
+                  </div>
+                  <div className={`text-xs font-medium w-12 text-right flex-shrink-0 ${isHigh ? 'text-emerald-600' : 'text-amber-600'}`}>
+                    {modelPct}%
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* LLM related badge + explanation */}
             {match.llmRelated != null && (
               <div className="space-y-1.5">

@@ -183,6 +183,7 @@ class JudgmentService:
             vote_date=row.get("vote_date"),
             days_between=row.get("days_between"),
             similarity_score=row.get("similarity_score"),
+            predicted_probability=row.get("predicted_probability"),
             llm_related=row.get("llm_related"),
             llm_explanation=row.get("llm_explanation"),
             source=row.get("source"),

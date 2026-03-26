@@ -9,6 +9,7 @@ import {
   Search,
   RotateCcw,
   Tags,
+  Brain,
 } from 'lucide-react';
 import {
   fetchAllMatches,
@@ -162,6 +163,23 @@ function LlmBadge({ llmRelated }: { llmRelated?: boolean | null }) {
   );
 }
 
+function ModelBadge({ probability }: { probability?: number | null }) {
+  if (probability == null) return null;
+  const pct = Math.round(probability * 100);
+  const isHigh = probability >= 0.5;
+  return (
+    <span
+      className={`hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+        isHigh ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+      }`}
+      title={`Probabilite modele: ${pct}%`}
+    >
+      <Brain className="w-3 h-3" />
+      {pct}%
+    </span>
+  );
+}
+
 /* ─── Types for grouped data ─── */
 
 type GroupBy = 'question' | 'vote';
@@ -239,6 +257,7 @@ function MatchRow({
           </span>
         )}
 
+        <ModelBadge probability={match.predictedProbability} />
         <LlmBadge llmRelated={match.llmRelated} />
 
         {/* Classification buttons */}
@@ -327,7 +346,7 @@ function MatchRow({
             )}
           </div>
 
-          {/* Similarity + LLM */}
+          {/* Similarity + Model + LLM */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className="text-xs text-theme-tertiary w-24">Similarité :</span>
@@ -341,6 +360,26 @@ function MatchRow({
                 {similarityPercent}%
               </span>
             </div>
+            {match.predictedProbability != null && (() => {
+              const modelPct = Math.round((match.predictedProbability ?? 0) * 100);
+              const isHigh = (match.predictedProbability ?? 0) >= 0.5;
+              return (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-theme-tertiary w-24 flex items-center gap-1">
+                    <Brain className="w-3 h-3" /> Modèle :
+                  </span>
+                  <div className="flex-1 h-2 bg-theme-tertiary/20 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${isHigh ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                      style={{ width: `${modelPct}%` }}
+                    />
+                  </div>
+                  <span className={`text-xs w-10 text-right font-medium ${isHigh ? 'text-emerald-600' : 'text-amber-600'}`}>
+                    {modelPct}%
+                  </span>
+                </div>
+              );
+            })()}
             {match.llmExplanation && (
               <div>
                 <span className="text-xs text-theme-tertiary">Explication LLM : </span>

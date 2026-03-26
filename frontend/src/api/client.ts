@@ -29,6 +29,7 @@ export interface SurveyVoteMatch {
   voteDate?: string;
   daysBetween?: number;
   similarityScore?: number;
+  predictedProbability?: number | null;
   llmRelated?: boolean;
   llmExplanation?: string;
   source?: string;

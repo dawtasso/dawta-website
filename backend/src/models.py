@@ -47,6 +47,7 @@ class SurveyVoteMatch(BaseModel):
     vote_date: str | None = Field(None, alias="voteDate")
     days_between: int | None = Field(None, alias="daysBetween")
     similarity_score: float | None = Field(None, alias="similarityScore")
+    predicted_probability: float | None = Field(None, alias="predictedProbability")
     llm_related: bool | None = Field(None, alias="llmRelated")
     llm_explanation: str | None = Field(None, alias="llmExplanation")
     source: str | None = Field(None)
