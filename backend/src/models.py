@@ -34,12 +34,14 @@ class SurveyVoteMatch(BaseModel):
     """Survey-vote match from Supabase (new schema from eu_survey_correlation)."""
 
     match_id: str = Field(alias="matchId")
+    match_key: str | None = Field(None, alias="matchKey")
     question_id: str | None = Field(None, alias="questionId")
     question_clean: str | None = Field(None, alias="questionClean")
     question_original: str | None = Field(None, alias="questionOriginal")
     survey_file: str | None = Field(None, alias="surveyFile")
     survey_date: str | None = Field(None, alias="surveyDate")
     vote_id: int | None = Field(None, alias="voteId")
+    procedure_reference: str | None = Field(None, alias="procedureReference")
     vote_summary_original: str | None = Field(None, alias="voteSummaryOriginal")
     vote_summary_clean: str | None = Field(None, alias="voteSummaryClean")
     vote_date: str | None = Field(None, alias="voteDate")
