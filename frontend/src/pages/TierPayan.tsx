@@ -35,15 +35,6 @@ const ARTICLES: Article[] = [
       'La résolution 2334 (2016) du Conseil de sécurité déclare illégale la colonisation israélienne. La CIJ a qualifié l\'occupation de contraire au droit international (avis consultatif de juillet 2024). La résolution ES-10/21 (2023) de l\'Assemblée générale a appelé à un cessez-le-feu humanitaire immédiat à Gaza.',
     personnes: [
       {
-        nom: 'Bezalel Smotrich',
-        fonction: 'Ministre des Finances d\'Israël',
-        nationalite: 'israelien',
-        faits:
-          'En mars 2023, lors d\'un discours à Paris devant une carte incluant la Jordanie dans « Israël », a déclaré que « le peuple palestinien n\'existe pas » et a qualifié le village palestinien de Huwara de devant être « effacé ». En novembre 2023, a déclaré que les violences des colons contre les Palestiniens étaient de la « légitime défense ». La qualification de violences documentées par l\'ONU comme « légitime défense » constitue une banalisation de ces actes.',
-        sources: [
-        ],
-      },
-      {
         nom: 'Itamar Ben Gvir',
         fonction: 'Ministre de la Sécurité nationale d\'Israël',
         nationalite: 'israelien',
@@ -77,15 +68,6 @@ const ARTICLES: Article[] = [
 
         ],
       },
-      {
-        nom: 'Meyer Habib',
-        fonction: 'Ancien député français (2013-2024)',
-        nationalite: 'francais',
-        faits:
-          'A qualifié à de nombreuses reprises les opérations militaires israéliennes à Gaza de « légitime défense d\'Israël », y compris lors de bombardements ayant causé des victimes civiles massives documentées par l\'ONU. A systématiquement relativisé et minoré le nombre de victimes civiles palestiniennes.',
-        sources: [
-        ],
-      },
     ],
   },
   {
@@ -100,65 +82,20 @@ const ARTICLES: Article[] = [
       'La résolution 181 (1947) de l\'Assemblée générale de l\'ONU prévoit la création de deux États. La résolution 67/19 (2012) reconnaît la Palestine comme État observateur non membre. La résolution 2334 (2016) réaffirme l\'illégalité des colonies et la solution à deux États. 149 pays sur 193 reconnaissent l\'État de Palestine (mars 2026).',
     personnes: [
       {
-        nom: 'Benjamin Netanyahu',
-        fonction: 'Premier ministre d\'Israël',
+        nom: 'XXXX',
+        fonction: 'XXXXX',
         nationalite: 'israelien',
         faits:
-          'En janvier 2024, a déclaré : « Je ne ferai pas de compromis sur le contrôle sécuritaire israélien total sur l\'ensemble du territoire à l\'ouest du Jourdain — et cela est contradictoire avec un État palestinien ». En septembre 2023, a présenté à l\'ONU une carte où la Palestine n\'existe pas. Rejette publiquement la création d\'un État palestinien, reconnu par 149 pays.',
+          'XXXX',
         sources: [
         ],
       },
       {
-        nom: 'Bezalel Smotrich',
-        fonction: 'Ministre des Finances d\'Israël',
-        nationalite: 'israelien',
-        faits:
-          'A déclaré en mars 2023 à Paris : « Il n\'y a pas de peuple palestinien ». A publié un plan appelant à l\'annexion de toute la Cisjordanie et au refus de tout État palestinien. Nie l\'existence même du peuple auquel la résolution 181 accorde un État.',
-        sources: [
-        ],
-      },
-      {
-        nom: 'Itamar Ben Gvir',
-        fonction: 'Ministre de la Sécurité nationale d\'Israël',
-        nationalite: 'israelien',
-        faits:
-          'Milite ouvertement pour l\'annexion totale de la Cisjordanie et contre tout État palestinien. A déclaré : « Mon droit sur [la Cisjordanie] est supérieur à celui des Arabes ». Prône la « réémigration volontaire » des Palestiniens.',
-        sources: [
-        ],
-      },
-      {
-        nom: 'Naftali Bennett',
-        fonction: 'Ancien Premier ministre d\'Israël (2021-2022)',
-        nationalite: 'israelien',
-        faits:
-          'A déclaré : « Je ferai tout ce qui est en mon pouvoir pour empêcher un État palestinien ». A proposé l\'annexion de la zone C (60% de la Cisjordanie). Ces déclarations constituent une provocation directe à la négation de l\'État de Palestine reconnu par l\'ONU.',
-        sources: [
-        ],
-      },
-      {
-        nom: 'Avigdor Lieberman',
-        fonction: 'Ancien ministre des Affaires étrangères d\'Israël',
-        nationalite: 'israelien',
-        faits:
-          'A proposé publiquement des plans de « transfert de population » visant à nier les droits nationaux palestiniens. A qualifié les citoyens arabes d\'Israël de « cinquième colonne ».',
-        sources: [
-        ],
-      },
-      {
-        nom: 'Éric Zemmour',
-        fonction: 'Ancien candidat à la présidentielle française',
+        nom: 'XXXXX',
+        fonction: 'XXXXXX',
         nationalite: 'francais',
         faits:
-          'A déclaré en octobre 2023 sur CNews : « Il n\'y a pas de peuple palestinien, il n\'y a pas d\'État palestinien ». Cette négation publique d\'un État reconnu par 149 pays et l\'Assemblée générale de l\'ONU tombe directement sous le coup de l\'article 2.',
-        sources: [
-        ],
-      },
-      {
-        nom: 'Sylvain Maillard',
-        fonction: 'Député, cosignataire de la proposition de loi',
-        nationalite: 'francais',
-        faits:
-          'Cosignataire de la proposition de loi, a conditionné la reconnaissance de l\'État palestinien à des prérequis non prévus par les résolutions de l\'ONU, ce qui revient à nier de facto le droit à l\'autodétermination reconnu par l\'Assemblée générale.',
+          'XXXX',
         sources: [
         ],
       },
@@ -176,20 +113,20 @@ const ARTICLES: Article[] = [
       "Le Comité pour l\'élimination de la discrimination raciale (CERD) de l\'ONU a documenté des discriminations systématiques contre les Palestiniens. Amnesty International, Human Rights Watch et le rapporteur spécial de l\'ONU ont qualifié la situation d\'apartheid (2022). \n - https://www.ohchr.org/fr/press-releases/2022/03/special-rapporteur-situation-human-rights-occupied-palestinian-territories",
     personnes: [
       {
-        nom: 'Analyse structurelle',
-        fonction: 'Application asymétrique de la loi',
+        nom: 'XXXX',
+        fonction: 'XXXXX',
         nationalite: 'israelien',
         faits:
-          'Cet article procédural élargit les droits d\'action des associations antiracistes. Appliqué symétriquement, il permettrait aux associations de défense des droits des Palestiniens de se constituer partie civile contre des propos racistes anti-arabes ou anti-palestiniens — propos documentés par le CERD de l\'ONU. En pratique, la loi Payan vise à faciliter les poursuites dans un seul sens.',
+          'XXXX',
         sources: [
         ],
       },
       {
-        nom: 'Asymétrie institutionnelle',
-        fonction: 'Associations bénéficiaires vs. exclues',
+        nom: 'XXXXX',
+        fonction: 'XXXXXX',
         nationalite: 'francais',
         faits:
-          'L\'article 3 facilite l\'action en justice d\'associations comme le CRIF ou la LICRA. Appliqué symétriquement, il devrait aussi permettre à des associations comme l\'AFPS (Association France Palestine Solidarité) de se constituer partie civile contre des propos racistes anti-arabes tenus publiquement en France.',
+          'XXXX',
         sources: [
         ],
       },
@@ -207,31 +144,21 @@ const ARTICLES: Article[] = [
       'La CIJ a reconnu en janvier 2024 la plausibilité d\'un génocide à Gaza (ordonnance Afrique du Sud c. Israël). Le rapporteur spécial Francesca Albanese a qualifié les actes à Gaza d\'« actes de génocide » (mars 2024). La CPI a émis des mandats d\'arrêt contre Netanyahu et Gallant en novembre 2024.',
     personnes: [
       {
-        nom: 'Benjamin Netanyahu',
-        fonction: 'Premier ministre d\'Israël',
+        nom: 'XXXX',
+        fonction: 'XXXXX',
         nationalite: 'israelien',
         faits:
-          'A qualifié les accusations de génocide portées devant la CIJ de « scandaleuses ». A systématiquement utilisé la mémoire de la Shoah pour justifier les opérations militaires à Gaza, comparant le Hamas aux nazis. Cette instrumentalisation de la Shoah à des fins politiques constitue, selon plusieurs historiens, une banalisation par comparaison abusive.',
+          'XXXX',
         sources: [
         ],
       },
       {
-        nom: 'Yoav Gallant',
-        fonction: 'Ancien ministre de la Défense d\'Israël',
-        nationalite: 'israelien',
-        faits:
-          'En qualifiant les Palestiniens d\'« animaux humains », a utilisé un langage déshumanisant rappelant la terminologie nazie, ce qui constitue une banalisation de la Shoah par comparaison inversée. Visé par un mandat d\'arrêt de la CPI pour crimes de guerre et crimes contre l\'humanité.',
-        sources: [
-        ],
-      },
-      {
-        nom: 'Éric Zemmour',
-        fonction: 'Ancien candidat à la présidentielle française',
+        nom: 'XXXXX',
+        fonction: 'XXXXXX',
         nationalite: 'francais',
         faits:
-          'En octobre 2019, a déclaré que le régime de Vichy avait « protégé les Juifs français » en livrant les Juifs étrangers, contestant la responsabilité de l\'État français dans la Shoah. Condamné pour contestation de crime contre l\'humanité.',
+          'XXXX',
         sources: [
-          "https://www.lemonde.fr/societe/article/2025/04/02/eric-zemmour-condamne-a-10-000-euros-d-amende-apres-avoir-declare-que-philippe-petain-avait-sauve-les-juifs-francais_6589971_3224.html",
         ],
       },
     ],
@@ -574,11 +501,7 @@ export default function TierPayan() {
           politique du gouvernement israélien.
         </p>
         <p className="text-sm text-amber-700 leading-relaxed">
-          <strong>Avertissement :</strong> Les faits cités ont été initialement générés par un
-          LLM (Claude) et n'ont été que partiellement vérifiés par un humain. Les sources
-          peuvent contenir des erreurs, des approximations ou des liens cassés. Cette page
-          est un travail en cours — les votes des utilisateurs (+/-) aident à identifier les
-          informations à corriger.
+          <strong> 🇫🇷🇱🇧 </strong>
         </p>
       </div>
     </PageLayout>

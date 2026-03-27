@@ -23,14 +23,15 @@
   },
   {
     "id": "tier-payan",
-    "title": "Proposition de loi Payan — Application symétrique",
+    "title": "Proposition de loi Payan - Et si l'on devait condamner le gouvernement israëlien?",
     "githubUrl": "https://github.com/dawtasso/tier-payan",
-    "description": "Application hypothétique de la proposition de loi n°575 (« Payan ») au cas Israël-Palestine. Analyse symétrique des 4 articles avec identification des responsables israéliens et français potentiellement visés.",
+    "description": "Application hypothétique de la proposition de loi n°575 (« Payan ») et plus largement du texte amendé sur les actions du gouvernement israëliens et quelques français (pourquoi pas?).",
     "longDescription": null,
     "status": "published",
     "publishedAt": "2026-03-26",
     "hasSlide": false,
-    "hasReport": false
+    "hasReport": false,
+    "hidden": true
   }
 ]
 
