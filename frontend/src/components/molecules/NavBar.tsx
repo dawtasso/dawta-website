@@ -17,6 +17,7 @@ type NavBarProps = {
 const defaultNavItems: NavItem[] = [
   { to: '/', label: 'Accueil' },
   { to: '/projects', label: 'Projets' },
+  { to: '/pepites', label: 'Pépites' },
   { to: '/about', label: 'À propos' },
 ];
 
