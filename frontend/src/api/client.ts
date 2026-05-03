@@ -285,3 +285,80 @@ export async function fetchDemographicAlignment(
   }
   return response.json();
 }
+
+// ─── Europressing types & API ───
+
+export interface EpLegalCaseSummary {
+  affairId: string;
+  title: string;
+  category?: string;
+  severity?: string;
+  status?: string;
+  dateStart?: string;
+  dateFacts?: string;
+  politicianName?: string;
+  politicianParty?: string;
+  articleCount: number;
+  labeledCount: number;
+}
+
+export interface EpArticleWithRelevance {
+  articleId: string;
+  title: string;
+  source?: string;
+  datePublished?: string;
+  contentText?: string;
+  daysSinceCase?: number;
+  relevanceCategory?: string;
+  relevanceScore?: number;
+  manualJudgment?: boolean | null;
+  notes?: string;
+}
+
+export interface EpCaseDetail {
+  affairId: string;
+  title: string;
+  category?: string;
+  severity?: string;
+  status?: string;
+  dateStart?: string;
+  dateFacts?: string;
+  description?: string;
+  politicianName?: string;
+  politicianParty?: string;
+  articles: EpArticleWithRelevance[];
+  articleCount: number;
+  labeledCount: number;
+}
+
+export async function fetchEpCases(): Promise<EpLegalCaseSummary[]> {
+  const response = await fetch(`${API_BASE_URL}/api/europressing/cases`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch cases: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}
+
+export async function fetchEpCaseDetail(affairId: string): Promise<EpCaseDetail> {
+  const response = await fetch(`${API_BASE_URL}/api/europressing/cases/${encodeURIComponent(affairId)}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch case detail: ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}
+
+export async function labelEpArticle(
+  articleId: string,
+  affairId: string,
+  manualJudgment: boolean | null,
+  notes?: string,
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/europressing/label`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ articleId, affairId, manualJudgment, notes }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to label article: ${response.status} ${response.statusText}`);
+  }
+}

@@ -8,6 +8,8 @@ import ProjectDetail from './pages/ProjectDetail';
 import JudgeSurveyVote from './pages/JudgeSurveyVote';
 import LabelAnswers from './pages/LabelAnswers';
 import DemographicAlignment from './pages/DemographicAlignment';
+import EpCases from './pages/EpCases';
+import EpCaseDetail from './pages/EpCaseDetail';
 import { SecretModeProvider } from './contexts/SecretModeContext';
 
 const queryClient = new QueryClient();
@@ -25,6 +27,8 @@ function App() {
               <Route path="projects/ue-pair-correlation/judge" element={<JudgeSurveyVote />} />
               <Route path="projects/ue-pair-correlation/label-answers" element={<LabelAnswers />} />
               <Route path="projects/ue-pair-correlation/demographic-alignment" element={<DemographicAlignment />} />
+              <Route path="projects/europressing/cases" element={<EpCases />} />
+              <Route path="projects/europressing/cases/:affairId" element={<EpCaseDetail />} />
               <Route path="about" element={<About />} />
             </Route>
           </Routes>

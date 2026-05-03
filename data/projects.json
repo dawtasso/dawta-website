@@ -20,6 +20,15 @@
     "publishedAt": "2026-02-22",
     "hasJudgeFeature": true,
     "hidden": true
+  },
+  {
+    "id": "europressing",
+    "title": "Europressing",
+    "description": "Collecte et analyse d'articles de presse liés aux affaires judiciaires de politiciens français. Labelisation de la pertinence des articles.",
+    "longDescription": null,
+    "status": "published",
+    "publishedAt": "2026-05-01",
+    "hidden": true
   }
 ]
 
