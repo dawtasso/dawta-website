@@ -203,7 +203,7 @@ class DemographicAlignmentResponse(BaseModel):
 # ─── Europressing models ───
 
 
-class EpLegalCaseSummary(BaseModel):
+class EpAffairSummary(BaseModel):
     affair_id: str = Field(alias="affairId")
     title: str = ""
     category: str | None = None
@@ -211,6 +211,7 @@ class EpLegalCaseSummary(BaseModel):
     status: str | None = None
     date_start: str | None = Field(None, alias="dateStart")
     date_facts: str | None = Field(None, alias="dateFacts")
+    date_verdict: str | None = Field(None, alias="dateVerdict")
     politician_name: str | None = Field(None, alias="politicianName")
     politician_party: str | None = Field(None, alias="politicianParty")
     article_count: int = Field(0, alias="articleCount")
@@ -234,7 +235,7 @@ class EpArticleWithRelevance(BaseModel):
     model_config = {"populate_by_name": True}
 
 
-class EpCaseDetail(BaseModel):
+class EpAffairDetail(BaseModel):
     affair_id: str = Field(alias="affairId")
     title: str = ""
     category: str | None = None
@@ -242,7 +243,13 @@ class EpCaseDetail(BaseModel):
     status: str | None = None
     date_start: str | None = Field(None, alias="dateStart")
     date_facts: str | None = Field(None, alias="dateFacts")
+    date_verdict: str | None = Field(None, alias="dateVerdict")
     description: str | None = None
+    poligraph_url: str | None = Field(None, alias="poligraphUrl")
+    fine_eur: int | None = Field(None, alias="fineEur")
+    prison_months: int | None = Field(None, alias="prisonMonths")
+    prison_suspended: bool | None = Field(None, alias="prisonSuspended")
+    ineligibility_months: int | None = Field(None, alias="ineligibilityMonths")
     politician_name: str | None = Field(None, alias="politicianName")
     politician_party: str | None = Field(None, alias="politicianParty")
     articles: list[EpArticleWithRelevance] = []

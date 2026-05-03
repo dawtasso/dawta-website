@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Check, X, RotateCcw, ChevronDown, ChevronUp, Search, ArrowLeft } from 'lucide-react';
-import { fetchEpCaseDetail, labelEpArticle, type EpArticleWithRelevance } from '../api/client';
+import { fetchEpAffairDetail, labelEpArticle, type EpArticleWithRelevance } from '../api/client';
 import { PageHeader, LoadingState, ErrorMessage, PageLayout, StatusBadge } from '../components';
 
 const RELEVANCE_FILTERS = [
@@ -60,9 +60,9 @@ function DaysBadge({ days }: { days: number | undefined | null }) {
 function RelevanceBadge({ category }: { category: string | undefined }) {
   if (!category) return null;
   const colors: Record<string, string> = {
-    HIGH: 'bg-red-100 text-red-700',
+    HIGH: 'bg-green-100 text-green-700',
     MEDIUM: 'bg-amber-100 text-amber-700',
-    LOW: 'bg-green-100 text-green-700',
+    LOW: 'bg-red-100 text-red-700',
   };
   return (
     <span className={`inline-block px-2 py-0.5 text-xs font-medium uppercase rounded ${colors[category] || 'bg-gray-100 text-gray-600'}`}>
@@ -71,7 +71,7 @@ function RelevanceBadge({ category }: { category: string | undefined }) {
   );
 }
 
-export default function EpCaseDetail() {
+export default function EpAffairDetail() {
   const { affairId } = useParams<{ affairId: string }>();
   const queryClient = useQueryClient();
   const [relevanceFilter, setRelevanceFilter] = useState('');
@@ -80,9 +80,9 @@ export default function EpCaseDetail() {
   const [expandedArticle, setExpandedArticle] = useState<string | null>(null);
   const [notesMap, setNotesMap] = useState<Record<string, string>>({});
 
-  const { data: caseDetail, isLoading, error } = useQuery({
-    queryKey: ['epCaseDetail', affairId],
-    queryFn: () => fetchEpCaseDetail(affairId!),
+  const { data: affair, isLoading, error } = useQuery({
+    queryKey: ['epAffairDetail', affairId],
+    queryFn: () => fetchEpAffairDetail(affairId!),
     enabled: !!affairId,
   });
 
@@ -97,14 +97,14 @@ export default function EpCaseDetail() {
       notes?: string;
     }) => labelEpArticle(articleId, affairId!, manualJudgment, notes),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['epCaseDetail', affairId] });
-      queryClient.invalidateQueries({ queryKey: ['epCases'] });
+      queryClient.invalidateQueries({ queryKey: ['epAffairDetail', affairId] });
+      queryClient.invalidateQueries({ queryKey: ['epAffairs'] });
     },
   });
 
   const filtered = useMemo(() => {
-    if (!caseDetail) return [];
-    let result = caseDetail.articles;
+    if (!affair) return [];
+    let result = affair.articles;
 
     if (relevanceFilter) {
       result = result.filter((a) => a.relevanceCategory === relevanceFilter);
@@ -123,7 +123,7 @@ export default function EpCaseDetail() {
       );
     }
     return result;
-  }, [caseDetail, relevanceFilter, labelFilter, searchQuery]);
+  }, [affair, relevanceFilter, labelFilter, searchQuery]);
 
   const handleLabel = (articleId: string, manualJudgment: boolean | null) => {
     labelMutation.mutate({
@@ -134,7 +134,7 @@ export default function EpCaseDetail() {
   };
 
   const handleNotesBlur = (articleId: string) => {
-    const article = caseDetail?.articles.find((a) => a.articleId === articleId);
+    const article = affair?.articles.find((a) => a.articleId === articleId);
     if (!article) return;
     const newNotes = notesMap[articleId];
     // Only save if notes changed and article already has a judgment
@@ -155,7 +155,7 @@ export default function EpCaseDetail() {
     );
   }
 
-  if (error || !caseDetail) {
+  if (error || !affair) {
     return (
       <PageLayout maxWidth="6xl">
         <ErrorMessage
@@ -167,8 +167,21 @@ export default function EpCaseDetail() {
     );
   }
 
-  const remaining = caseDetail.articleCount - caseDetail.labeledCount;
-  const pct = caseDetail.articleCount > 0 ? (caseDetail.labeledCount / caseDetail.articleCount) * 100 : 0;
+  const remaining = affair.articleCount - affair.labeledCount;
+  const pct = affair.articleCount > 0 ? (affair.labeledCount / affair.articleCount) * 100 : 0;
+
+  // Build sentence summary parts
+  const sentenceParts: string[] = [];
+  if (affair.fineEur != null) {
+    sentenceParts.push(`${affair.fineEur.toLocaleString('fr-FR')} € d'amende`);
+  }
+  if (affair.prisonMonths != null) {
+    const label = affair.prisonSuspended ? `${affair.prisonMonths} mois (sursis)` : `${affair.prisonMonths} mois`;
+    sentenceParts.push(label);
+  }
+  if (affair.ineligibilityMonths != null) {
+    sentenceParts.push(`${affair.ineligibilityMonths} mois d'inéligibilité`);
+  }
 
   return (
     <PageLayout maxWidth="6xl">
@@ -181,28 +194,44 @@ export default function EpCaseDetail() {
       </Link>
 
       <PageHeader
-        title={caseDetail.title}
-        subtitle={caseDetail.description || undefined}
+        title={affair.title}
+        subtitle={affair.description || undefined}
       />
 
-      {/* Case metadata */}
+      {/* Affair metadata */}
       <div className="flex flex-wrap items-center gap-2 mb-6">
-        {caseDetail.politicianName && (
+        {affair.politicianName && (
           <span className="text-sm text-theme-primary font-medium">
-            {caseDetail.politicianName}
-            {caseDetail.politicianParty && (
-              <span className="ml-1 text-theme-tertiary font-normal">({caseDetail.politicianParty})</span>
+            {affair.politicianName}
+            {affair.politicianParty && (
+              <span className="ml-1 text-theme-tertiary font-normal">({affair.politicianParty})</span>
             )}
           </span>
         )}
-        {caseDetail.category && <StatusBadge status={caseDetail.category} />}
-        {caseDetail.severity && <StatusBadge status={caseDetail.severity} variant="warning" />}
-        {caseDetail.status && <StatusBadge status={caseDetail.status} variant="success" />}
-        {caseDetail.dateStart && (
-          <span className="text-xs text-theme-tertiary">Début : {caseDetail.dateStart}</span>
+        {affair.category && <StatusBadge status={affair.category} />}
+        {affair.severity && <StatusBadge status={affair.severity} variant="warning" />}
+        {affair.status && <StatusBadge status={affair.status} variant="success" />}
+        {affair.dateStart && (
+          <span className="text-xs text-theme-tertiary">Début : {affair.dateStart}</span>
         )}
-        {caseDetail.dateFacts && (
-          <span className="text-xs text-theme-tertiary">Faits : {caseDetail.dateFacts}</span>
+        {affair.dateFacts && (
+          <span className="text-xs text-theme-tertiary">Faits : {affair.dateFacts}</span>
+        )}
+        {affair.dateVerdict && (
+          <span className="text-xs text-theme-tertiary">Verdict : {affair.dateVerdict}</span>
+        )}
+        {affair.poligraphUrl && (
+          <a
+            href={affair.poligraphUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-dawta-600 hover:text-dawta-700 underline"
+          >
+            Poligraph
+          </a>
+        )}
+        {sentenceParts.length > 0 && (
+          <span className="text-xs text-theme-tertiary">Peine : {sentenceParts.join(' · ')}</span>
         )}
       </div>
 
@@ -210,7 +239,7 @@ export default function EpCaseDetail() {
       <div className="mb-6 space-y-3">
         <div className="grid grid-cols-3 gap-2">
           <div className="p-2 bg-green-50 rounded-lg text-center border border-green-100">
-            <div className="text-lg font-bold text-green-600">{caseDetail.labeledCount}</div>
+            <div className="text-lg font-bold text-green-600">{affair.labeledCount}</div>
             <div className="text-xs text-green-600/70">Labelisés</div>
           </div>
           <div className="p-2 bg-theme-secondary rounded-lg text-center">
@@ -218,13 +247,13 @@ export default function EpCaseDetail() {
             <div className="text-xs text-theme-tertiary">Restants</div>
           </div>
           <div className="p-2 bg-dawta-50 rounded-lg text-center border border-dawta-100">
-            <div className="text-lg font-bold text-dawta-600">{caseDetail.articleCount}</div>
+            <div className="text-lg font-bold text-dawta-600">{affair.articleCount}</div>
             <div className="text-xs text-dawta-600/70">Total articles</div>
           </div>
         </div>
         <div className="max-w-md mx-auto">
           <div className="flex justify-between text-xs text-dawta-600 mb-1">
-            <span>{caseDetail.labeledCount} labelisés</span>
+            <span>{affair.labeledCount} labelisés</span>
             <span>{pct.toFixed(1)}%</span>
           </div>
           <div className="h-2 bg-dawta-200 rounded-full overflow-hidden">
@@ -399,9 +428,10 @@ function ArticleRow({
       {/* Expandable content */}
       {isExpanded && article.contentText && (
         <div className="px-4 pb-3 border-t border-theme-light">
-          <p className="text-xs text-theme-primary whitespace-pre-wrap leading-relaxed mt-2">
-            {article.contentText}
-          </p>
+          <div
+            className="prose prose-sm max-w-none mt-2 text-theme-primary"
+            dangerouslySetInnerHTML={{ __html: article.contentText }}
+          />
         </div>
       )}
     </div>

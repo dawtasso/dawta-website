@@ -288,7 +288,7 @@ export async function fetchDemographicAlignment(
 
 // ─── Europressing types & API ───
 
-export interface EpLegalCaseSummary {
+export interface EpAffairSummary {
   affairId: string;
   title: string;
   category?: string;
@@ -296,6 +296,7 @@ export interface EpLegalCaseSummary {
   status?: string;
   dateStart?: string;
   dateFacts?: string;
+  dateVerdict?: string;
   politicianName?: string;
   politicianParty?: string;
   articleCount: number;
@@ -315,7 +316,7 @@ export interface EpArticleWithRelevance {
   notes?: string;
 }
 
-export interface EpCaseDetail {
+export interface EpAffairDetail {
   affairId: string;
   title: string;
   category?: string;
@@ -323,7 +324,13 @@ export interface EpCaseDetail {
   status?: string;
   dateStart?: string;
   dateFacts?: string;
+  dateVerdict?: string;
   description?: string;
+  poligraphUrl?: string;
+  fineEur?: number;
+  prisonMonths?: number;
+  prisonSuspended?: boolean;
+  ineligibilityMonths?: number;
   politicianName?: string;
   politicianParty?: string;
   articles: EpArticleWithRelevance[];
@@ -331,18 +338,18 @@ export interface EpCaseDetail {
   labeledCount: number;
 }
 
-export async function fetchEpCases(): Promise<EpLegalCaseSummary[]> {
+export async function fetchEpAffairs(): Promise<EpAffairSummary[]> {
   const response = await fetch(`${API_BASE_URL}/api/europressing/cases`);
   if (!response.ok) {
-    throw new Error(`Failed to fetch cases: ${response.status} ${response.statusText}`);
+    throw new Error(`Failed to fetch affairs: ${response.status} ${response.statusText}`);
   }
   return response.json();
 }
 
-export async function fetchEpCaseDetail(affairId: string): Promise<EpCaseDetail> {
+export async function fetchEpAffairDetail(affairId: string): Promise<EpAffairDetail> {
   const response = await fetch(`${API_BASE_URL}/api/europressing/cases/${encodeURIComponent(affairId)}`);
   if (!response.ok) {
-    throw new Error(`Failed to fetch case detail: ${response.status} ${response.statusText}`);
+    throw new Error(`Failed to fetch affair detail: ${response.status} ${response.statusText}`);
   }
   return response.json();
 }

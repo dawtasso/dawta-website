@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
-import { fetchEpCases, type EpLegalCaseSummary } from '../api/client';
+import { fetchEpAffairs, type EpAffairSummary } from '../api/client';
 import { PageHeader, LoadingState, ErrorMessage, PageLayout } from '../components';
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -19,25 +19,31 @@ function getCategoryColor(category: string | undefined): string {
   return CATEGORY_COLORS[category.toLowerCase()] || 'bg-dawta-100 text-dawta-700';
 }
 
-export default function EpCases() {
+export default function EpAffairs() {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  const { data: cases = [], isLoading, error } = useQuery({
-    queryKey: ['epCases'],
-    queryFn: fetchEpCases,
+  const { data: affairs = [], isLoading, error } = useQuery({
+    queryKey: ['epAffairs'],
+    queryFn: fetchEpAffairs,
   });
 
+  const noArticleCount = useMemo(
+    () => affairs.filter((c) => c.articleCount === 0).length,
+    [affairs],
+  );
+
   const filtered = useMemo(() => {
-    if (!searchQuery.trim()) return cases;
+    const withArticles = affairs.filter((c) => c.articleCount > 0);
+    if (!searchQuery.trim()) return withArticles;
     const q = searchQuery.toLowerCase();
-    return cases.filter(
+    return withArticles.filter(
       (c) =>
         c.title.toLowerCase().includes(q) ||
         c.politicianName?.toLowerCase().includes(q) ||
         c.category?.toLowerCase().includes(q),
     );
-  }, [cases, searchQuery]);
+  }, [affairs, searchQuery]);
 
   return (
     <PageLayout maxWidth="6xl">
@@ -72,13 +78,18 @@ export default function EpCases() {
 
       {!isLoading && !error && (
         <>
-          <p className="text-xs text-theme-tertiary mb-3">
+          <p className="text-xs text-theme-tertiary mb-1">
             {filtered.length} affaire{filtered.length !== 1 ? 's' : ''}
           </p>
+          {noArticleCount > 0 && (
+            <p className="text-xs text-theme-tertiary/60 mb-3">
+              {noArticleCount} affaire{noArticleCount !== 1 ? 's' : ''} sans articles collectés
+            </p>
+          )}
 
           <div className="space-y-2">
             {filtered.map((c) => (
-              <CaseRow key={c.affairId} case_={c} onClick={() => navigate(`/projects/europressing/cases/${c.affairId}`)} />
+              <AffairRow key={c.affairId} affair={c} onClick={() => navigate(`/projects/europressing/cases/${c.affairId}`)} />
             ))}
           </div>
 
@@ -93,7 +104,7 @@ export default function EpCases() {
   );
 }
 
-function CaseRow({ case_: c, onClick }: { case_: EpLegalCaseSummary; onClick: () => void }) {
+function AffairRow({ affair: c, onClick }: { affair: EpAffairSummary; onClick: () => void }) {
   const fullyLabeled = c.articleCount > 0 && c.labeledCount >= c.articleCount;
   const noArticles = c.articleCount === 0;
   const refDate = c.dateStart || c.dateFacts;
