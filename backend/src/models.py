@@ -198,3 +198,71 @@ class DemographicAlignmentResponse(BaseModel):
     statistics: dict[str, DemographicStatistic] = {}
 
     model_config = {"populate_by_name": True}
+
+
+# ─── Europressing models ───
+
+
+class EpAffairSummary(BaseModel):
+    affair_id: str = Field(alias="affairId")
+    title: str = ""
+    category: str | None = None
+    severity: str | None = None
+    status: str | None = None
+    date_start: str | None = Field(None, alias="dateStart")
+    date_facts: str | None = Field(None, alias="dateFacts")
+    date_verdict: str | None = Field(None, alias="dateVerdict")
+    politician_name: str | None = Field(None, alias="politicianName")
+    politician_party: str | None = Field(None, alias="politicianParty")
+    article_count: int = Field(0, alias="articleCount")
+    labeled_count: int = Field(0, alias="labeledCount")
+
+    model_config = {"populate_by_name": True}
+
+
+class EpArticleWithRelevance(BaseModel):
+    article_id: str = Field(alias="articleId")
+    title: str = ""
+    source: str | None = None
+    date_published: str | None = Field(None, alias="datePublished")
+    content_text: str | None = Field(None, alias="contentText")
+    days_since_case: int | None = Field(None, alias="daysSinceCase")
+    relevance_category: str | None = Field(None, alias="relevanceCategory")
+    relevance_score: float | None = Field(None, alias="relevanceScore")
+    manual_judgment: bool | None = Field(None, alias="manualJudgment")
+    notes: str | None = None
+
+    model_config = {"populate_by_name": True}
+
+
+class EpAffairDetail(BaseModel):
+    affair_id: str = Field(alias="affairId")
+    title: str = ""
+    category: str | None = None
+    severity: str | None = None
+    status: str | None = None
+    date_start: str | None = Field(None, alias="dateStart")
+    date_facts: str | None = Field(None, alias="dateFacts")
+    date_verdict: str | None = Field(None, alias="dateVerdict")
+    description: str | None = None
+    poligraph_url: str | None = Field(None, alias="poligraphUrl")
+    fine_eur: int | None = Field(None, alias="fineEur")
+    prison_months: int | None = Field(None, alias="prisonMonths")
+    prison_suspended: bool | None = Field(None, alias="prisonSuspended")
+    ineligibility_months: int | None = Field(None, alias="ineligibilityMonths")
+    politician_name: str | None = Field(None, alias="politicianName")
+    politician_party: str | None = Field(None, alias="politicianParty")
+    articles: list[EpArticleWithRelevance] = []
+    article_count: int = Field(0, alias="articleCount")
+    labeled_count: int = Field(0, alias="labeledCount")
+
+    model_config = {"populate_by_name": True}
+
+
+class EpManualJudgmentRequest(BaseModel):
+    article_id: str = Field(alias="articleId")
+    affair_id: str = Field(alias="affairId")
+    manual_judgment: bool | None = Field(alias="manualJudgment")
+    notes: str | None = None
+
+    model_config = {"populate_by_name": True}
