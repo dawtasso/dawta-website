@@ -121,7 +121,7 @@ class EuropressingService:
             )
             scores_by_article: dict[str, dict] = {}
             for row in rs_resp.data or []:
-                scores_by_article[row["article_id"]] = row
+                scores_by_article[row["doc_key"]] = row
 
             # Compute reference date for days_since_case
             ref_date_str = case.get("date_start") or case.get("date_facts")
@@ -190,7 +190,7 @@ class EuropressingService:
         try:
             supabase = get_supabase()
             row = {
-                "article_id": article_id,
+                "doc_key": article_id,
                 "affair_id": affair_id,
                 "manual_judgment": manual_judgment,
                 "notes": notes,
@@ -198,7 +198,7 @@ class EuropressingService:
                 "reviewed_at": datetime.utcnow().isoformat(),
             }
             supabase.table("ep_relevance_scores").upsert(
-                row, on_conflict="article_id,affair_id"
+                row, on_conflict="doc_key,affair_id"
             ).execute()
             return True
         except Exception:
