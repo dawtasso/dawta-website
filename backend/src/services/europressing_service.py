@@ -9,6 +9,21 @@ from src.supabase_client import get_supabase
 class EuropressingService:
     """Service for browsing europressing affairs and labeling article relevance."""
 
+    @staticmethod
+    def _fetch_all_rows(query_builder) -> list[dict]:
+        """Paginate through a Supabase query to fetch all rows (bypasses 1000 row limit)."""
+        page_size = 1000
+        offset = 0
+        all_rows: list[dict] = []
+        while True:
+            resp = query_builder.range(offset, offset + page_size - 1).execute()
+            rows = resp.data or []
+            all_rows.extend(rows)
+            if len(rows) < page_size:
+                break
+            offset += page_size
+        return all_rows
+
     @classmethod
     def get_all_affairs(cls) -> list[EpAffairSummary]:
         """Get all affairs with article and label counts."""
@@ -25,25 +40,22 @@ class EuropressingService:
             affairs = affairs_resp.data or []
 
             # 2. Count articles per affair_id
-            ac_resp = (
-                supabase.table("ep_article_affairs")
-                .select("affair_id")
-                .execute()
+            ac_rows = cls._fetch_all_rows(
+                supabase.table("ep_article_affairs").select("affair_id")
             )
             article_counts: dict[str, int] = {}
-            for row in ac_resp.data or []:
+            for row in ac_rows:
                 aid = row["affair_id"]
                 article_counts[aid] = article_counts.get(aid, 0) + 1
 
             # 3. Count labeled (manual_judgment IS NOT NULL) per affair_id
-            rs_resp = (
+            rs_rows = cls._fetch_all_rows(
                 supabase.table("ep_relevance_scores")
                 .select("affair_id")
                 .not_.is_("manual_judgment", "null")
-                .execute()
             )
             labeled_counts: dict[str, int] = {}
-            for row in rs_resp.data or []:
+            for row in rs_rows:
                 aid = row["affair_id"]
                 labeled_counts[aid] = labeled_counts.get(aid, 0) + 1
 
@@ -196,20 +208,15 @@ class EuropressingService:
         manual_judgment: bool | None,
         notes: str | None,
     ) -> bool:
-        """Upsert manual_judgment and notes on ep_relevance_scores."""
+        """Update manual_judgment and notes on ep_relevance_scores."""
         try:
             supabase = get_supabase()
-            row = {
-                "doc_key": article_id,
-                "affair_id": affair_id,
+            supabase.table("ep_relevance_scores").update({
                 "manual_judgment": manual_judgment,
                 "notes": notes,
                 "reviewed_by": "admin",
                 "reviewed_at": datetime.utcnow().isoformat(),
-            }
-            supabase.table("ep_relevance_scores").upsert(
-                row, on_conflict="doc_key,affair_id"
-            ).execute()
+            }).eq("doc_key", article_id).eq("affair_id", affair_id).execute()
             return True
         except Exception:
             logger.exception("Error setting manual judgment")
