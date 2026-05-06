@@ -59,6 +59,14 @@ class Settings(BaseSettings):
     supabase_url: str = os.getenv("SUPABASE_URL")
     supabase_key: str = os.getenv("SUPABASE_KEY")
 
+    # Offline mode: use local SQLite instead of Supabase for europressing
+    offline_mode: bool = False
+
+    # Europressing SQLite path (for bidirectional sync)
+    europressing_sqlite_path: str = str(
+        Path(__file__).parent.parent.parent.parent / "europressing" / "data" / "europresse.db"
+    )
+
 
 settings = Settings()
 
