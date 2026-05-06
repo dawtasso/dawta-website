@@ -301,6 +301,9 @@ export interface EpAffairSummary {
   politicianParty?: string;
   articleCount: number;
   labeledCount: number;
+  highCount: number;
+  mediumCount: number;
+  lowCount: number;
 }
 
 export interface EpArticleWithRelevance {

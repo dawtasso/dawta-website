@@ -216,6 +216,9 @@ class EpAffairSummary(BaseModel):
     politician_party: str | None = Field(None, alias="politicianParty")
     article_count: int = Field(0, alias="articleCount")
     labeled_count: int = Field(0, alias="labeledCount")
+    high_count: int = Field(0, alias="highCount")
+    medium_count: int = Field(0, alias="mediumCount")
+    low_count: int = Field(0, alias="lowCount")
 
     model_config = {"populate_by_name": True}
 

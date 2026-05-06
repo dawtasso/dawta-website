@@ -142,11 +142,18 @@ function AffairRow({ affair: c, onClick }: { affair: EpAffairSummary; onClick: (
             )}
           </div>
         </div>
-        <div className="flex-shrink-0 text-right">
-          <span className={`text-xs font-medium ${fullyLabeled ? 'text-green-600' : 'text-theme-tertiary'}`}>
-            {c.labeledCount}/{c.articleCount}
-          </span>
-          <div className="text-xs text-theme-tertiary">articles</div>
+        <div className="flex-shrink-0 flex items-center gap-3">
+          <div className="flex items-center gap-1.5 text-xs">
+            <span className="text-emerald-500 font-medium">{c.highCount}<span className="text-emerald-400 font-normal">H</span></span>
+            <span className="text-amber-500 font-medium">{c.mediumCount}<span className="text-amber-400 font-normal">M</span></span>
+            <span className="text-red-500 font-medium">{c.lowCount}<span className="text-red-400 font-normal">L</span></span>
+          </div>
+          <div className="text-right">
+            <span className={`text-xs font-medium ${fullyLabeled ? 'text-green-600' : 'text-theme-tertiary'}`}>
+              {c.labeledCount}/{c.articleCount}
+            </span>
+            <div className="text-xs text-theme-tertiary">articles</div>
+          </div>
         </div>
       </div>
     </button>
